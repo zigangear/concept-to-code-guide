@@ -1470,7 +1470,7 @@ body {
 <div class="phases">
 
 <!-- ── STAGE 01 ── -->
-<div class="phase" onclick="this.classList.toggle('open')">
+<div class="phase">
   <div class="phase-num-col">
     <span class="phase-num claude">01</span>
     <span class="phase-badge badge-claude">Claude</span>
@@ -1698,7 +1698,7 @@ Where a parameter conflicts with a default AI output, the parameter takes preced
 </section>
 
 <!-- ── STAGE 02 ── -->
-<div class="phase" onclick="this.classList.toggle('open')">
+<div class="phase">
   <div class="phase-num-col">
     <span class="phase-num claude">02</span>
     <span class="phase-badge badge-claude">Claude</span>
@@ -2004,7 +2004,7 @@ CORE TENSION TO PROTECT: [named — one specific, irreducible thing]</pre>
 </div>
 
 <!-- ── STAGE 03 ── -->
-<div class="phase" onclick="this.classList.toggle('open')">
+<div class="phase">
   <div class="phase-num-col">
     <span class="phase-num claude">03</span>
     <span class="phase-badge badge-claude">Claude</span>
@@ -2208,7 +2208,7 @@ If RESPONSE holds → proceed to Stage 04 with WHAT THE ANTI-CASE REVEALS as a n
 </div>
 
 <!-- ── STAGE 04 ── -->
-<div class="phase" onclick="this.classList.toggle('open')">
+<div class="phase">
   <div class="phase-num-col">
     <span class="phase-num claude">04</span>
     <span class="phase-badge badge-claude">Claude</span>
@@ -2363,7 +2363,7 @@ WHAT THIS PALETTE REFUSES · RISK</pre>
 </div>
 
 <!-- ── STAGE 05 ── -->
-<div class="phase" onclick="this.classList.toggle('open')">
+<div class="phase">
   <div class="phase-num-col">
     <span class="phase-num claude">05</span>
     <span class="phase-badge badge-claude">Claude</span>
@@ -2547,7 +2547,7 @@ DIRECTION: [what would make it specific to this concept only]</pre>
 </div>
 
 <div class="phases">
-<div class="phase" onclick="this.classList.toggle('open')">
+<div class="phase">
   <div class="phase-num-col">
     <span class="phase-num claude">05.5</span>
     <span class="phase-badge badge-claude">Claude</span>
@@ -2750,7 +2750,7 @@ If any answer is no — flag it before outputting.</pre>
 <div class="phases">
 
 <!-- ── STAGE 06 ── -->
-<div class="phase" onclick="this.classList.toggle('open')">
+<div class="phase">
   <div class="phase-num-col">
     <span class="phase-num cursor">06</span>
     <span class="phase-badge badge-cursor">Cursor</span>
@@ -2835,7 +2835,7 @@ If you cannot name a section's function from the CDD — do not include it.</pre
 </div>
 
 <!-- ── STAGE 07 ── -->
-<div class="phase" onclick="this.classList.toggle('open')">
+<div class="phase">
   <div class="phase-num-col">
     <span class="phase-num cursor">07</span>
     <span class="phase-badge badge-cursor">Cursor</span>
@@ -3034,7 +3034,7 @@ Seed consistency + style reference are the primary control mechanisms."</pre>
 </div>
 
 <!-- ── STAGE 08 ── -->
-<div class="phase" onclick="this.classList.toggle('open')">
+<div class="phase">
   <div class="phase-num-col">
     <span class="phase-num both">08</span>
     <span class="phase-badge badge-both">Both</span>
@@ -3277,6 +3277,15 @@ SECTIONS AFFECTED BY DRIFT: [list — these need re-review after the fix]</pre>
     }, RESET_MS);
   }
 
+  /* Accordion: toggle only from the stage header row, never from expanded content */
+  document.querySelectorAll('.phase').forEach((phase) => {
+    phase.addEventListener('click', (e) => {
+      if (!e.target.closest('.phase-num-col, .phase-main, .phase-toggle')) return;
+      phase.classList.toggle('open');
+    });
+  });
+
+  /* Copy prompt templates — capture phase stops accordion from receiving the click */
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('.copy-btn');
     if (!btn) return;
@@ -3292,14 +3301,14 @@ SECTIONS AFFECTED BY DRIFT: [list — these need re-review after the fix]</pre>
       await copyText(text);
       showCopied(btn);
     } catch {
-      btn.textContent = 'Failed';
+      btn.textContent = 'failed';
       btn.classList.remove('copied');
       clearTimeout(btn._copyReset);
       btn._copyReset = setTimeout(() => {
         btn.textContent = btn.dataset.label || 'copy';
       }, RESET_MS);
     }
-  });
+  }, true);
 })();
 </script>
 
