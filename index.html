@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concept to Code — Complete Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Syne:wght@400;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0b0a09; --bg-2: #111009; --bg-card: #141310;
+  --text: #e6e1d6; --text-2: #7a7268; --text-3: #4a4540;
+  --accent: #c4954a; --accent-dim: #6b4f27;
+  --claude: #4ade80; --cursor: #a78bfa;
+  --rule: #1e1c19; --rule-mid: #2a2724;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Syne', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+html { background: var(--bg); color: var(--text); font-family: var(--serif); font-size: 17px; }
+body { max-width: 960px; margin: 0 auto; padding: 0 52px 120px; }
+
+/* ── MASTHEAD ── */
+.masthead { padding: 96px 0 80px; border-bottom: 1px solid var(--rule); }
+.masthead-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 40px; }
+.masthead h1 { font-size: clamp(56px, 9vw, 96px); font-weight: 300; line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 40px; }
+.masthead h1 em { font-style: italic; color: var(--text-2); }
+.masthead-sub { font-family: var(--sans); font-size: 15px; color: var(--text-2); line-height: 1.75; max-width: 580px; margin-bottom: 48px; }
+.masthead-meta { display: flex; gap: 48px; flex-wrap: wrap; }
+.meta-item { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--text-3); text-transform: uppercase; }
+.meta-item span { display: block; color: var(--text-2); margin-top: 5px; font-style: italic; letter-spacing: 0; text-transform: none; font-size: 13px; }
+
+/* ── LEGEND ── */
+.legend { display: flex; gap: 36px; padding: 28px 0; border-bottom: 1px solid var(--rule); flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 10px; }
+.legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.dot-claude { background: var(--claude); }
+.dot-cursor { background: var(--cursor); }
+.dot-both { background: var(--accent); }
+.legend-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--text-2); text-transform: uppercase; }
+
+/* ── ZONE HEADERS ── */
+.zone-header { padding: 48px 0 28px; }
+.zone-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; }
+.zone-label.claude { color: var(--claude); }
+.zone-label.cursor { color: var(--cursor); }
+.zone-title { font-size: clamp(30px, 4.5vw, 48px); font-weight: 300; line-height: 1.1; letter-spacing: -0.01em; }
+.zone-title em { font-style: italic; color: var(--text-2); }
+.zone-desc { font-family: var(--sans); font-size: 14px; color: var(--text-2); line-height: 1.75; max-width: 560px; margin-top: 12px; }
+
+/* ── PHASES ── */
+.phases { display: flex; flex-direction: column; gap: 2px; }
+.phase {
+  display: grid; grid-template-columns: 96px 1fr auto;
+  border: 1px solid var(--rule); background: var(--bg);
+  cursor: pointer; overflow: hidden; transition: background 0.15s;
+}
+.phase:hover { background: var(--bg-card); }
+.phase.open { background: var(--bg-card); border-color: var(--rule-mid); }
+.phase-num-col { padding: 24px 0 24px 24px; border-right: 1px solid var(--rule); display: flex; flex-direction: column; gap: 8px; }
+.phase-num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; }
+.phase-num.claude { color: var(--claude); }
+.phase-num.cursor { color: var(--cursor); }
+.phase-num.both { color: var(--accent); }
+.phase-badge { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; display: inline-block; }
+.badge-claude { color: var(--claude); background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.15); }
+.badge-cursor { color: var(--cursor); background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.15); }
+.badge-both { color: var(--accent); background: rgba(196,149,74,0.08); border: 1px solid rgba(196,149,74,0.15); }
+.phase-time { font-family: var(--mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.1em; }
+.phase-main { padding: 24px 28px; }
+.phase-title { font-size: 20px; font-weight: 400; letter-spacing: -0.01em; color: var(--text); margin-bottom: 5px; }
+.phase-hook { font-family: var(--sans); font-size: 13px; color: var(--text-2); }
+.phase-toggle { padding: 24px; display: flex; align-items: flex-start; }
+.phase-toggle svg { width: 15px; height: 15px; stroke: var(--text-3); transition: transform 0.2s; flex-shrink: 0; }
+.phase.open .phase-toggle svg { transform: rotate(45deg); }
+.phase-detail { display: none; grid-column: 1/-1; padding: 0 28px 32px 120px; border-top: 1px solid var(--rule); }
+.phase.open .phase-detail { display: block; }
+
+/* ── DETAIL INNER COMPONENTS ── */
+.phase-io { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; margin-bottom: 22px; }
+.io-block { padding: 13px 16px; background: var(--bg-2); border-left: 2px solid var(--rule-mid); }
+.io-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px; }
+.io-text { font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.55; }
+
+.step-list { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 22px; }
+.step-list li { font-family: var(--sans); font-size: 14px; color: var(--text-2); padding-left: 20px; position: relative; line-height: 1.65; }
+.step-list li::before { content: '—'; position: absolute; left: 0; color: var(--text-3); font-family: var(--mono); font-size: 11px; top: 2px; }
+.step-list li strong { font-family: var(--mono); font-weight: 400; font-size: 12px; color: var(--text); background: var(--bg-2); padding: 1px 6px; border: 1px solid var(--rule-mid); }
+
+/* ── OUTPUT BLOCK ── */
+.output-block { padding: 14px 18px; background: var(--bg-2); border-left: 2px solid var(--accent); font-family: var(--mono); font-size: 12px; color: var(--text-2); letter-spacing: 0.04em; margin-bottom: 20px; }
+.output-block strong { color: var(--accent); font-weight: 300; margin-right: 8px; }
+
+/* ── CHECKPOINT BLOCK ── */
+.checkpoint { margin-top: 20px; margin-bottom: 20px; border: 1px solid rgba(74,222,128,0.15); background: rgba(74,222,128,0.04); padding: 20px 22px; }
+.checkpoint-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--claude); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.checkpoint-label::before { content: '✓'; font-size: 11px; }
+.checkpoint ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.checkpoint ul li { font-family: var(--sans); font-size: 13px; color: var(--text-2); padding-left: 18px; position: relative; line-height: 1.6; }
+.checkpoint ul li::before { content: '·'; position: absolute; left: 5px; color: var(--claude); font-size: 16px; top: -1px; }
+
+/* ── HANDOFF TO NEXT ── */
+.to-next { margin-top: 20px; border: 1px solid var(--accent-dim); background: rgba(196,149,74,0.04); padding: 20px 22px; }
+.to-next-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.to-next-label::after { content: '→'; font-size: 13px; }
+.to-next p { font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 10px; }
+.to-next p:last-child { margin-bottom: 0; }
+.to-next ul { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.to-next ul li { font-family: var(--sans); font-size: 13px; color: var(--text-2); padding-left: 18px; position: relative; line-height: 1.6; }
+.to-next ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; font-family: var(--mono); top: 2px; }
+
+/* ── PROMPT SECTION ── */
+.prompt-section { margin-top: 24px; }
+.prompt-section-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
+.prompt-box { background: var(--bg-2); border: 1px solid var(--rule-mid); border-left: 2px solid var(--accent); padding: 22px 26px; margin-bottom: 14px; position: relative; }
+.prompt-box pre { font-family: var(--mono); font-size: 13px; color: var(--text-2); line-height: 1.85; white-space: pre-wrap; word-break: break-word; }
+.prompt-box .fill { color: var(--accent); font-style: italic; }
+.copy-btn { position: absolute; top: 12px; right: 12px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); background: none; border: 1px solid var(--rule-mid); padding: 4px 10px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+.copy-btn:hover { color: var(--accent); border-color: var(--accent-dim); }
+.copy-btn.copied { color: var(--claude); border-color: var(--claude); }
+
+/* ── NOTES ── */
+.notes { margin-top: 18px; border-top: 1px solid var(--rule); padding-top: 4px; }
+.note-item { display: flex; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--rule); }
+.note-item:last-child { border-bottom: none; }
+.note-key { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.1em; min-width: 90px; flex-shrink: 0; padding-top: 2px; }
+.note-val { font-family: var(--sans); font-size: 13.5px; color: var(--text-2); line-height: 1.65; }
+
+/* ── HANDOFF DIVIDER ── */
+.handoff-block { margin: 8px 0; padding: 36px 40px; border: 1px solid var(--accent-dim); background: rgba(196,149,74,0.04); display: grid; grid-template-columns: 52px 1fr; gap: 24px; align-items: start; }
+.handoff-icon { font-family: var(--mono); font-size: 30px; color: var(--accent-dim); line-height: 1; padding-top: 4px; }
+.handoff-headline { font-size: clamp(22px, 3vw, 32px); font-weight: 300; line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 16px; }
+.handoff-headline em { font-style: italic; color: var(--text-2); }
+.handoff-body { font-family: var(--sans); font-size: 14px; color: var(--text-2); line-height: 1.75; max-width: 560px; }
+.handoff-rule { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--accent-dim); font-family: var(--mono); font-size: 10px; color: var(--accent-dim); letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* ── PULL QUOTE ── */
+.pull-quote { padding: 52px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 8px 0; }
+.pull-quote blockquote { font-size: clamp(24px, 3.5vw, 36px); font-weight: 300; line-height: 1.25; letter-spacing: -0.01em; max-width: 800px; }
+.pull-quote blockquote em { font-style: italic; color: var(--text-2); }
+.pull-quote cite { display: block; margin-top: 22px; font-family: var(--mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* ── CLOSING ── */
+.closing { padding: 72px 0 0; }
+.closing-headline { font-size: clamp(32px, 5vw, 54px); font-weight: 300; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 40px; max-width: 720px; }
+.closing-headline em { font-style: italic; color: var(--text-2); }
+.rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--rule); border: 1px solid var(--rule); }
+.rule-block { background: var(--bg); padding: 30px 26px; transition: background 0.2s; }
+.rule-block:hover { background: var(--bg-card); }
+.rule-num { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.16em; margin-bottom: 14px; }
+.rule-title { font-size: 19px; font-weight: 400; letter-spacing: -0.01em; margin-bottom: 11px; }
+.rule-body { font-family: var(--sans); font-size: 14px; color: var(--text-2); line-height: 1.7; }
+
+/* ── PROJECT PARAMETERS ── */
+.params-outer { margin: 32px 0; border: 1px solid var(--accent-dim); }
+.params-header { padding: 22px 28px 18px; border-bottom: 1px solid var(--accent-dim); background: rgba(196,149,74,0.04); }
+.params-title { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+.params-intro { font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-top: 8px; max-width: 640px; }
+.param-row { display: grid; grid-template-columns: 180px 1fr; border-bottom: 1px solid var(--rule); }
+.param-row:last-child { border-bottom: none; }
+.param-name { padding: 16px 24px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text); text-transform: uppercase; border-right: 1px solid var(--rule); line-height: 1.5; }
+.param-detail { padding: 14px 24px; }
+.param-options { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 7px; }
+.param-opt { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border: 1px solid var(--rule-mid); color: var(--text-3); }
+.param-opt.hi { border-color: var(--accent-dim); color: var(--accent); }
+.param-desc { font-family: var(--sans); font-size: 12px; color: var(--text-3); line-height: 1.65; }
+
+/* ── WORKFLOW DEPTH ── */
+.mode-outer { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 8px; }
+.mode-col { padding: 24px 26px; background: var(--bg-card); border: 1px solid var(--rule-mid); }
+.mode-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px; }
+.mode-label.full { color: var(--claude); }
+.mode-label.sprint { color: var(--cursor); }
+.mode-desc { font-family: var(--sans); font-size: 12px; color: var(--text-3); margin-bottom: 14px; line-height: 1.6; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+.mode-rows { display: flex; flex-direction: column; gap: 6px; }
+.mode-row { font-family: var(--mono); font-size: 11px; color: var(--text-2); line-height: 1.5; }
+.mode-row strong { color: var(--text); font-weight: 400; }
+.mode-note { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--rule); font-family: var(--sans); font-size: 12px; color: var(--text-3); line-height: 1.65; }
+
+/* ── SELL THE IDEA TEST ── */
+.sell-test { margin-top: 20px; margin-bottom: 20px; border: 1px solid rgba(167,139,250,0.2); background: rgba(167,139,250,0.04); padding: 20px 22px; }
+.sell-test-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.sell-test-label::before { content: '◈'; font-size: 11px; }
+.sell-test-intro { font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 14px; font-style: italic; }
+.sell-test ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.sell-test ul li { font-family: var(--sans); font-size: 13px; color: var(--text-2); padding-left: 18px; position: relative; line-height: 1.6; }
+.sell-test ul li::before { content: '·'; position: absolute; left: 5px; color: var(--cursor); font-size: 16px; top: -1px; }
+.sell-test-fail { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(167,139,250,0.15); font-family: var(--sans); font-size: 12.5px; color: var(--text-3); line-height: 1.65; }
+.sell-test-fail strong { color: var(--cursor); font-weight: 400; }
+
+@media (max-width: 640px) {
+  body { padding: 0 24px 80px; }
+  .phase { grid-template-columns: 1fr; }
+  .phase-num-col { border-right: none; border-bottom: 1px solid var(--rule); flex-direction: row; padding: 16px 20px; }
+  .phase-detail { padding-left: 20px; }
+  .phase-io { grid-template-columns: 1fr; }
+  .handoff-block { grid-template-columns: 1fr; }
+  .rules-grid { grid-template-columns: 1fr; }
+  .masthead-meta, .legend { flex-direction: column; gap: 20px; }
+  .param-row { grid-template-columns: 1fr; }
+  .param-name { border-right: none; border-bottom: 1px solid var(--rule); }
+  .mode-outer { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <p class="masthead-label">Concept to Code · Complete Field Guide · 2026</p>
+  <h1>From brief<br>to <em>outstanding</em><br>prototype</h1>
+  <p class="masthead-sub">Eight stages from product description to award-potential visual prototype. Every stage includes the exact prompt to use, the results to verify before moving forward, and the mechanism for passing your output into the next stage.</p>
+  <div class="masthead-meta">
+    <div class="meta-item">Goal<span>Non-generic, commercially strong, festival-level</span></div>
+    <div class="meta-item">Output<span>HTML prototype + visual system</span></div>
+    <div class="meta-item">Stages<span>5+1 checkpoint in Claude · 3 in Cursor</span></div>
+  </div>
+</header>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot dot-claude"></div><span class="legend-label">Claude — ideation</span></div>
+  <div class="legend-item"><div class="legend-dot dot-cursor"></div><span class="legend-label">Cursor — execution</span></div>
+  <div class="legend-item"><div class="legend-dot dot-both"></div><span class="legend-label">Both — review</span></div>
+</div>
+
+<!-- ── WORKFLOW DEPTH ── -->
+<div style="margin: 0 0 8px;">
+  <div style="padding: 22px 0 16px; border-bottom: 1px solid var(--rule); margin-bottom: 16px;">
+    <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-2); margin-bottom: 8px;">Workflow Depth + Execution Fidelity — set before Stage 01</div>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; max-width: 640px;">Two decisions that don't require brief context: <strong style="font-weight: 400; color: var(--text);">Workflow Depth</strong> (how far to go) and <strong style="font-weight: 400; color: var(--text);">Execution Fidelity</strong> (the quality bar). All other parameters — Creative Intensity, Generic Distance, Visual Risk, Reference Distance, Commercial Clarity — are set <em>after</em> Stage 01 when the category and audience are understood. Stage 02 Framework Selection and the Mini Traceability Check are never compressed regardless of mode.</p>
+  </div>
+  <div class="mode-outer">
+    <div class="mode-col">
+      <div class="mode-label full">● Full Mode</div>
+      <p class="mode-desc">Flagship portfolio work, complex brand systems, high-stakes client projects, or when the goal is an outstanding authored prototype.</p>
+      <div class="mode-rows">
+        <div class="mode-row"><strong>01 ·</strong> Full brief extraction + category audit</div>
+        <div class="mode-row"><strong>02 ·</strong> Framework selection + optional parallel test</div>
+        <div class="mode-row"><strong>03 ·</strong> 3–5 concepts + NFRT + selection + amplification</div>
+        <div class="mode-row"><strong>04 ·</strong> Full reference analysis + type + color + tension</div>
+        <div class="mode-row"><strong>05 ·</strong> Full CDD + Traceability Check</div>
+        <div class="mode-row"><strong>05.5 ·</strong> Style Reference + Hero + 1–2 concept sections</div>
+        <div class="mode-row"><strong>06–07 ·</strong> Complete prototype, section by section</div>
+        <div class="mode-row"><strong>08 ·</strong> Strategic critic + Cursor QA + protected list</div>
+      </div>
+    </div>
+    <div class="mode-col">
+      <div class="mode-label sprint">○ Sprint Mode</div>
+      <p class="mode-desc">Fast exploration, internal demo, early proof of concept, or when time is limited and speed matters more than depth.</p>
+      <div class="mode-rows">
+        <div class="mode-row"><strong>01 ·</strong> Core Transformation + Internal Problem + Exclusion Zone</div>
+        <div class="mode-row"><strong>02 ·</strong> One selected framework — no parallel testing</div>
+        <div class="mode-row"><strong>03 ·</strong> 3 concepts → one selected + amplified</div>
+        <div class="mode-row"><strong>04 ·</strong> One typographic direction + one palette + one tension technique</div>
+        <div class="mode-row"><strong>05 ·</strong> Mini CDD + Traceability Check</div>
+        <div class="mode-row"><strong>05.5 ·</strong> Hero-only HTML proof</div>
+        <div class="mode-row"><strong>06–07 ·</strong> 1–2 section prototype</div>
+        <div class="mode-row"><strong>08 ·</strong> Critic focused on concept survival + first read + genericity</div>
+      </div>
+      <div class="mode-note">Stage 02 and the Mini Traceability Check are never compressed in Sprint Mode. These are where the concept is born or where it fails silently.
+
+<strong style="color: var(--cursor); font-weight: 400;">Sprint Mode quality floor:</strong> The Sell the Idea Test is a hard stop. A failing concept does not go to Cursor regardless of time pressure. Sprint compresses depth — it does not lower the concept quality bar.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ PHASE A ═══════════════════════════════════ -->
+<div class="zone-header">
+  <p class="zone-label claude">Phase A · Claude</p>
+  <h2 class="zone-title">Ideation —<br><em>discovering the concept</em></h2>
+  <p class="zone-desc">Everything here is open exploration. You are searching, not building. Do not close any direction prematurely. The concept must be fully formed and amplified before you cross the handoff into Cursor.</p>
+</div>
+
+<div class="phases">
+
+<!-- ── STAGE 01 ── -->
+<div class="phase" onclick="this.classList.toggle('open')">
+  <div class="phase-num-col">
+    <span class="phase-num claude">01</span>
+    <span class="phase-badge badge-claude">Claude</span>
+    <span class="phase-time">20 min</span>
+  </div>
+  <div class="phase-main">
+    <div class="phase-title">Brief Extraction + Category Audit</div>
+    <div class="phase-hook">Know what everyone is doing — so you can deliberately refuse it</div>
+  </div>
+  <div class="phase-toggle"><svg viewBox="0 0 14 14" fill="none" stroke-width="1.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></div>
+  <div class="phase-detail">
+    <div class="phase-io">
+      <div class="io-block"><div class="io-label">Input</div><div class="io-text">Any source document — brief, product description, strategy notes, founder's memo, meeting summary</div></div>
+      <div class="io-block"><div class="io-label">Skills used</div><div class="io-text">extractor · semiotic-codes</div></div>
+    </div>
+
+    <ul class="step-list">
+      <li>Paste whatever document you have into the Brief Extraction prompt — it normalises any format into the same structured output</li>
+      <li>The three fields that cannot be left as [UNKNOWN]: Core Transformation, Internal Problem, Target Audience psychographics. These are the foundational inputs that enable any creative framework to operate — they are required regardless of which path Stage 02 takes.</li>
+      <li>Run the Category Audit immediately after — document what every competitor looks and sounds like before you try to be different from them</li>
+      <li>Write the Exclusion Zone as a specific directive: "This project will never use..." — vague principles are not enforceable</li>
+      <li>Identify the Whitespace Opportunity: what emotional territory does no competitor currently own?</li>
+    </ul>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Brief Extraction</div>
+      <div class="prompt-box" id="p01a">
+        <button class="copy-btn" onclick="copyPrompt('p01a',this)">Copy</button>
+        <pre>I'm going to paste a document below — it could be a brief, product description, strategy notes, or a meeting summary. Extract and structure it into a standardised project brief.
+
+Do not add anything not in the source material. If a field is missing — mark it [UNKNOWN] and list it as an open question.
+
+SOURCE DOCUMENT:
+<span class="fill">[paste your document here — any format, any length]</span>
+
+Extract and output:
+
+PRODUCT / SERVICE
+What it actually does. One paragraph, plain language. No marketing copy.
+
+CORE TRANSFORMATION
+What changes in the user's life after using this product?
+Format: "Before: [state]. After: [state]. The product is the mechanism between them."
+
+TARGET AUDIENCE
+Demographics: age range, profession, income tier, geography.
+Psychographics: what do they fear losing? What do they aspire to become?
+Identity signal: how do they want to be perceived by others?
+Relationship to this category: engaged / skeptical / aspirational / unaware.
+
+THE PROBLEM — THREE LEVELS
+External: the obvious, surface-level task they need to accomplish.
+Internal: the fear, doubt, or emotion beneath it.
+Philosophical: the belief that this situation shouldn't be this way.
+
+FORMAT AND DELIVERABLE
+What are we building? [landing page / campaign / brand story / presentation]
+Primary conversion goal: what should the user do?
+Secondary goal: what should they feel or believe?
+
+CONSTRAINTS
+Visual or tonal restrictions. What this brand must never look or sound like.
+
+DEFINITION OF DONE
+How will we know this worked? One specific, measurable signal.
+
+OPEN QUESTIONS
+Everything unclear or missing — must be resolved before Stage 02.</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Category Audit</div>
+      <div class="prompt-box" id="p01b">
+        <button class="copy-btn" onclick="copyPrompt('p01b',this)">Copy</button>
+        <pre>Run a fast competitor visual scan for this project. Deep code analysis runs in Stage 02.
+
+Product category: <span class="fill">[e.g. "cognitive health supplements", "B2B cybersecurity"]</span>
+Key competitors: <span class="fill">[list 3–5 names, or write "identify the main players yourself"]</span>
+
+For each competitor — one sentence only:
+COMPETITOR [N]: [name] — [dominant visual language in one sentence: what it looks like, what it says about itself]
+
+Then output:
+
+CATEGORY VISUAL SIGNATURE: [one sentence — what does this entire category look like? what would a stranger say if they saw 10 sites from this space?]
+
+EXCLUSION ZONE — write as a specific directive:
+"This project will never use: [specific visual and verbal elements derived from what every competitor does]"
+
+WHITESPACE OPPORTUNITY:
+What emotional territory does no competitor currently own? [one sentence — specific, not generic]
+
+Note: Dominant / Residual / Emergent code analysis is handled in Stage 02 if Semiotic Engineering is selected as the framework. Do not duplicate it here.</pre>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-label">Checkpoint — what you must have before moving to Stage 02</div>
+      <ul>
+        <li>A completed brief with Core Transformation written as a human truth, not a product claim</li>
+        <li>Internal Problem is an emotion — not a feature request. "They want better analytics" is a feature request. "They fear losing credibility in a room of people smarter than them" is an emotion.</li>
+        <li>Target Audience psychographics filled — what they fear losing and what they aspire to become</li>
+        <li>A written Exclusion Zone with specific, testable prohibitions</li>
+        <li>A Whitespace Opportunity paragraph identifying unclaimed emotional territory</li>
+        <li>Zero unresolved [UNKNOWN] fields in the three critical areas above</li>
+      </ul>
+    </div>
+
+    <div class="to-next">
+      <div class="to-next-label">How this becomes input for Stage 02</div>
+      <p>The brief does not dictate which creative framework Stage 02 uses — it supplies the raw material from which the most effective framework is selected. Framework Mapper reads the brief and recommends the best-fit path. Different briefs activate different approaches.</p>
+      <ul>
+        <li>Core Transformation + Internal Problem → conceptual raw material for whichever framework Stage 02 applies: Ghost Extraction, Semiotic Code analysis, StoryKernel threat mapping, or Layered Metaphor blending</li>
+        <li>Exclusion Zone → constrains all framework outputs regardless of which method is chosen — prohibits directions that would produce category clichés</li>
+        <li>Whitespace Opportunity → signals the unclaimed emotional territory Stage 02 must navigate toward, whichever framework is applied</li>
+        <li>Category Audit (dominant / residual / emergent codes) → critical input for Semiotic Engineering path; directional input for all other paths</li>
+        <li>Target Audience psychographics → informs "Why Now" and Resonance evaluation in Stage 03 across all frameworks</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROJECT PARAMETERS ── -->
+<div class="params-outer">
+  <div class="params-header">
+    <div class="params-title">⬡ Project Parameters — set after Stage 01, informed by the brief</div>
+    <p class="params-intro">Set these four parameters after completing Stage 01 — the brief tells you how saturated the category is, what the audience needs, and how much creative risk the whitespace supports. Narrative Depth follows automatically from framework selection. Visual Risk is set by Creative Intensity. Execution Fidelity is declared in Workflow Depth above. Four decisions, not seven.</p>
+  </div>
+  <div class="param-row">
+    <div class="param-name">Creative<br>Intensity</div>
+    <div class="param-detail">
+      <div class="param-options">
+        <span class="param-opt">1 · Safe</span>
+        <span class="param-opt">2 · Distinct</span>
+        <span class="param-opt hi">3 · Editorial</span>
+        <span class="param-opt">4 · Radical</span>
+        <span class="param-opt">5 · Speculative</span>
+      </div>
+      <p class="param-desc">Controls how far the workflow moves from safe, familiar solutions. 1–2: commercial clarity preserved. 3: award-facing but usable — the default. 4–5: category-breaking, higher execution risk, reserved for briefs that explicitly call for it.</p>
+    </div>
+  </div>
+  <div class="param-row">
+    <div class="param-name">Generic<br>Distance</div>
+    <div class="param-detail">
+      <div class="param-options">
+        <span class="param-opt">Low</span>
+        <span class="param-opt hi">Medium</span>
+        <span class="param-opt">High</span>
+        <span class="param-opt">Extreme</span>
+      </div>
+      <p class="param-desc">Applied after the first visual proof exists — not during ideation. Extreme: no visual move is allowed unless traceable to the Core Tension. Applied at Stage 05.5 Sell the Idea Test and Stage 08 critic review.</p>
+    </div>
+  </div>
+  <div class="param-row">
+    <div class="param-name">Commercial<br>Clarity</div>
+    <div class="param-detail">
+      <div class="param-options">
+        <span class="param-opt">Low · Portfolio first</span>
+        <span class="param-opt hi">Medium · Balanced</span>
+        <span class="param-opt">High · Conversion protected</span>
+      </div>
+      <p class="param-desc">Protects product clarity and conversion goals against experimental drift. High: choices that reduce comprehension are rejected at Stage 08 regardless of concept strength.</p>
+    </div>
+  </div>
+  <div class="param-row">
+    <div class="param-name">Reference<br>Distance</div>
+    <div class="param-detail">
+      <div class="param-options">
+        <span class="param-opt">Near Category</span>
+        <span class="param-opt hi">Adjacent</span>
+        <span class="param-opt">Far Outside</span>
+      </div>
+      <p class="param-desc">Sets how far Stage 04 reference analysis reaches. Near: direct competitors. Adjacent: editorial, fashion, type culture. Far Outside: architecture, scientific visualization, industrial design — the category's own references pull toward dominant codes.</p>
+    </div>
+  </div>
+
+
+<div class="output-block" style="margin: 0; border-left-color: var(--claude); border-top: 1px solid var(--rule);">
+  <strong style="display: block; color: var(--claude); font-weight: 300; margin-bottom: 10px; letter-spacing: 0.08em;">Project Context Block — generate this from your choices above</strong>
+  <div style="font-family: var(--sans); font-size: 12px; color: var(--text-2); line-height: 1.65; margin-bottom: 12px;">Copy and paste this block into Stage 02 (Framework Selection), Stage 05 (CDD Synthesis), and Stage 08 (Strategic Review). It calibrates every AI output to your declared parameters.</div>
+  <pre style="font-family: var(--mono); font-size: 11px; color: var(--text-2); line-height: 1.8; white-space: pre-wrap; border: 1px solid var(--rule-mid); padding: 14px 18px; background: var(--bg);">PROJECT CONTEXT
+Mode: [Full / Sprint]  ·  Execution Fidelity: [Sketch / Prototype / Portfolio-grade]
+Creative Intensity: [1 / 2 / 3 / 4 / 5]  ·  Generic Distance: [Low / Medium / High / Extreme]
+Commercial Clarity: [Low / Medium / High]  ·  Visual Risk: [Conservative / Controlled / Radical]
+Reference Distance: [Near Category / Adjacent / Far Outside]
+
+Instruction: Apply these as constraints and calibration throughout this stage.
+Where a parameter conflicts with a default AI output, the parameter takes precedence.</pre>
+</div>
+
+</div>
+
+
+<!-- ── CREATIVE DIRECTOR SIGNATURE ── -->
+<div style="margin: 0 0 8px; border: 1px solid rgba(167,139,250,0.25); background: rgba(167,139,250,0.04);">
+  <div style="padding: 22px 28px 18px; border-bottom: 1px solid rgba(167,139,250,0.15);">
+    <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px;">◈ Creative Director Signature — personal creative DNA</div>
+    <p style="font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; max-width: 640px;">The difference between AI output and art director output is personal contamination: accumulated taste, current obsessions, known failures, irrational refusals. Fill these four fields honestly — not correctly. Vague answers produce generic contamination. These fields make the output specific to <em>who is running this</em>, not just to what the brief says.</p>
+  </div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 2px;">
+    <div style="padding: 20px 24px; background: var(--bg-card);">
+      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px;">1 · Current Obsession</div>
+      <p style="font-family: var(--sans); font-size: 12px; color: var(--text-2); line-height: 1.65; margin-bottom: 10px;">What you can't stop thinking about right now — completely unrelated to this project. A specific film, building, album artwork, sport, restaurant, paper. Not a genre or category. One specific thing.</p>
+      <p style="font-family: var(--mono); font-size: 11px; color: var(--text-3); line-height: 1.5;">→ Becomes a mandatory reference in Stage 04a. Claude will explain its connection to Core Tension — especially if that connection isn't obvious.</p>
+    </div>
+    <div style="padding: 20px 24px; background: var(--bg-card);">
+      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px;">2 · Personal Refusal</div>
+      <p style="font-family: var(--sans); font-size: 12px; color: var(--text-2); line-height: 1.65; margin-bottom: 10px;">One thing you will not do on this project regardless of how appropriate it seems. Personal, irrational, possibly unjustifiable. Not from the brief — from your own experience with what you've seen fail.</p>
+      <p style="font-family: var(--mono); font-size: 11px; color: var(--text-3); line-height: 1.5;">→ Appended to Exclusion Zone. Cannot be overridden by brief logic or framework recommendations.</p>
+    </div>
+    <div style="padding: 20px 24px; background: var(--bg-card);">
+      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px;">3 · Taste Temperature</div>
+      <p style="font-family: var(--sans); font-size: 12px; color: var(--text-2); line-height: 1.65; margin-bottom: 10px;">What kind of work genuinely excites you right now. Not the correct answer — honest. It may contradict the brief. That tension is productive.</p>
+      <p style="font-family: var(--mono); font-size: 11px; color: var(--text-3); line-height: 1.5;">→ Informs Stage 03 concept selection and Stage 04 reference choices.</p>
+    </div>
+    <div style="padding: 20px 24px; background: var(--bg-card);">
+      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px;">4 · Known Trap</div>
+      <p style="font-family: var(--sans); font-size: 12px; color: var(--text-2); line-height: 1.65; margin-bottom: 10px;">The pattern you personally fall into. Something that looks good in your hands but you've learned leads to a weaker result. Not a weakness — a tendency.</p>
+      <p style="font-family: var(--mono); font-size: 11px; color: var(--text-3); line-height: 1.5;">→ Becomes a named check in Stage 08 Strategic Review. The critic looks for it explicitly.</p>
+    </div>
+  </div>
+  <div style="padding: 16px 28px 18px; border-top: 1px solid rgba(167,139,250,0.15);">
+    <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text-3); margin-bottom: 6px;">Quality check — before proceeding</div>
+    <p style="font-family: var(--sans); font-size: 12px; color: var(--text-3); line-height: 1.65;">Two different creative directors running the same brief should produce two different Signature Blocks. If yours could belong to anyone — rewrite the fields that are still generic. See <strong style="color: var(--text-2); font-weight: 400;">creative-director-signature.md</strong> for full protocol and Signature Summary template.</p>
+  </div>
+</div>
+
+<!-- ── STAGE 02 ── -->
+<div class="phase" onclick="this.classList.toggle('open')">
+  <div class="phase-num-col">
+    <span class="phase-num claude">02</span>
+    <span class="phase-badge badge-claude">Claude</span>
+    <span class="phase-time">30 min</span>
+  </div>
+  <div class="phase-main">
+    <div class="phase-title">Framework Selection + Concept Method</div>
+    <div class="phase-hook">Choose the creative framework the brief actually needs — then run it at full depth</div>
+  </div>
+  <div class="phase-toggle"><svg viewBox="0 0 14 14" fill="none" stroke-width="1.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></div>
+  <div class="phase-detail">
+    <div class="phase-io">
+      <div class="io-block"><div class="io-label">Input</div><div class="io-text">Completed brief + Exclusion Zone + Core Transformation + Category Audit (dominant / residual / emergent codes)</div></div>
+      <div class="io-block"><div class="io-label">Skills used</div><div class="io-text">framework-mapper → then the selected framework skill: ghosty-collider · semiotic-codes · or concept-generator (StoryKernel / Layered Metaphor paths)</div></div>
+    </div>
+
+    <ul class="step-list">
+      <li>Run <strong>framework-mapper</strong> first. It reads the brief characteristics and recommends the best-fit creative framework — and whether to run one framework or test several in parallel. Do not default to any single method before this step.</li>
+      <li>The framework selected here determines every subsequent prompt, every skill, and the shape of the concept output. The wrong framework produces a correctly executed but conceptually misaligned result.</li>
+      <li>If the brief is ambiguous or the category is highly saturated, framework-mapper may recommend running two frameworks in parallel and comparing outputs. This is a feature, not a fallback.</li>
+      <li>Spend the full time budget on this step. A shallow framework application produces shallow concepts. The depth of what you extract here is the ceiling for everything in Stage 03.</li>
+    </ul>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Framework Selection (run this first)</div>
+      <div class="prompt-box" id="p02select">
+        <button class="copy-btn" onclick="copyPrompt('p02select',this)">Copy</button>
+        <pre>Apply Framework Mapper to this brief.
+
+Brief summary: <span class="fill">[paste Core Transformation + Internal Problem + Category Audit from Stage 01]</span>
+Audience type: <span class="fill">[B2B / B2C / cultural / premium / etc.]</span>
+Format: <span class="fill">[landing page / campaign / brand story / product site]</span>
+Category saturation: <span class="fill">[high — many similar-looking competitors / low — open territory]</span>
+Conversion priority: <span class="fill">[speed and clarity / depth and resonance / both equally]</span>
+
+Project Context Block: <span class="fill">[paste your Project Context Block from the Parameters section above]</span>
+
+Output:
+PRIMARY FRAMEWORK: [name + one-line reason this fits this brief specifically]
+APPLICATION STEPS: [3–4 concrete steps for this project — not generic]
+SECONDARY FRAMEWORK (if applicable): [name + why it complements]
+PARALLEL TEST: [yes/no — should we run two frameworks and compare? Why?]
+AVOID FOR THIS PROJECT: [frameworks that would misfire, with reasons]</pre>
+      </div>
+    </div>
+
+    <div style="margin: 24px 0; padding: 20px 22px; border: 1px solid var(--accent-dim); background: rgba(196,149,74,0.06);">
+      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px;">⬡ Decision Logic — Which Path to Take</div>
+      <div style="font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 16px;">Read the brief characteristics and follow the matching path. When two conditions apply equally — run both and compare at Stage 03 selection.</div>
+      <div style="display: grid; gap: 2px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">IF category is visually saturated<br>and any obvious direction looks like a competitor</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ GHOSTY COLLIDER<br>Fragment Harvest → Ghost Extraction → Collision Matrix → Vision Crystallization → Reality Bridge</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">IF brand positioning / visual identity work<br>and you need to understand what the category already says</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ SEMIOTIC ENGINEERING<br>Brand Deconstruction → Code Identification → Cultural Scoping → Gap Elimination</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">IF B2B, enterprise, complex product<br>and the audience justifies decisions to others</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ STORYKERNEL (+ optional DIMENSIONAL TIME)<br>Existential Threat → Mentor → Talisman → New Potential</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">IF premium brand or portfolio site<br>and depth + return engagement matters more than speed</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ LAYERED METAPHOR / CONCEPTUAL BLENDING<br>Blended Space → First Read / Second Read / Deep Read</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">IF brief is ambiguous OR<br>two paths score equally from above</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ RUN BOTH, COMPARE AT STAGE 03<br>Use Selection + Amplification to choose the stronger concept output</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Ghosty Collider (path A)</div>
+      <div class="prompt-box" id="p02a">
+        <button class="copy-btn" onclick="copyPrompt('p02a',this)">Copy</button>
+        <pre>Apply Ghost Extraction + Collision Matrix to the following brief.
+
+Brief summary: <span class="fill">[paste Core Transformation + Internal Problem from Stage 01]</span>
+Exclusion Zone: <span class="fill">[domains and directions to avoid]</span>
+
+GHOST EXTRACTION
+Step 1 — Strip all of these:
+— Industry labels (platform, app, software, service, solution)
+— Product nouns (dashboard, report, subscription, account)
+— Category adjectives (innovative, seamless, data-driven, cutting-edge)
+
+Step 2 — Reformulate as:
+— Abstract physical forces or tensions
+— Verbs of transformation
+— What this product does to a person's inner state
+
+Step 3 — Self-test: read the ghost aloud. Can you identify the industry?
+If yes — extract further. The ghost must be unrecognisable without context.
+
+Output Ghost:
+GHOST: [2–4 sentences, zero industry language]
+CORE TRANSFORMATION: [one verb phrase]
+
+GHOST HARDENING — run before proceeding to Collision Matrix:
+
+Step 1 — Blacklist Scan:
+Does the Ghost contain any of these words? data · efficiency · growth · speed · safety · health · platform · insight · solution · transformation · innovation · future · scale · performance · intelligence · trust · seamless · powerful · streamlined
+Also check for: any product-type noun (software, app, tool, system) · any business-outcome verb (optimize, improve, accelerate, enable) · any brand claim adjective (leading, enterprise-grade, best-in-class)
+Result: [words found + rewritten Ghost if needed / "clean"]
+
+Step 2 — 10 Strangers Test:
+If 10 strangers read this Ghost, could any of them guess the product category?
+Result: [yes — rewrite / no — proceed]
+
+GHOST CONFIRMED: [final version that passes both tests]
+
+COLLISION MATRIX
+Generate 5 fragments from completely different domains (no two from the same domain):
+biology, architecture, material science, behavioural patterns, temporal phenomena, forensic science, cartography, fermentation, quantum mechanics.
+
+For each: ghost × fragment. Describe:
+— Surface: why these seem completely unrelated
+— Deep structure: where they share the same underlying logic
+— Electric moment: the specific point where they spark
+
+Rank: identify the 2 strongest by maximum surface incompatibility + maximum deep structural resonance.
+For each strong collision: one sentence describing what the camera sees. Specific, frameable, no adjectives.
+
+Output:
+FRAGMENTS: [all 5 with domains]
+COLLISION 1: [fragment] × [ghost] — Surface / Deep resonance / Cinematic Image
+COLLISION 2: [same format]
+STRONGEST: [which and why — one sentence]</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Semiotic Engineering (path B)</div>
+      <div class="prompt-box" id="p02b">
+        <button class="copy-btn" onclick="copyPrompt('p02b',this)">Copy</button>
+        <pre>Apply Semiotic Engineering to this brand/product context.
+
+Category: <span class="fill">[product category]</span>
+Key competitors: <span class="fill">[3–5 names, or "identify the main players yourself"]</span>
+Brand context: <span class="fill">[paste brief summary from Stage 01]</span>
+Target audience: <span class="fill">[psychographics from Stage 01]</span>
+
+Step 1 — Brand Deconstruction
+What are the current associations? What does the category's visual language claim?
+
+Step 2 — Code Identification
+DOMINANT CODES: what everyone uses — the safe zone we are refusing
+RESIDUAL CODES: conventions that are aging — why they are fading
+EMERGENT CODES: unclaimed cultural territory — look outside the category
+
+Step 3 — Cultural Scoping
+What cultural shifts are relevant to this audience right now?
+How is the perception of [relevant value] changing?
+
+Step 4 — Gap Elimination
+GAP: where brand intent and audience perception are misaligned
+OPPORTUNITY: what emotional territory no competitor currently owns
+SMASHABLE ASSET POTENTIAL: which single element could become recognisable without a logo?
+
+Apply Visual Social Semiotics:
+Representational (what it depicts) / Interactional (how it involves the viewer) / Compositional (how it directs attention)
+
+Output:
+DOMINANT CODES / RESIDUAL CODES / EMERGENT CODES / GAP / WHITESPACE OPPORTUNITY / SMASHABLE ASSET</pre>
+      </div>
+    </div>
+
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — StoryKernel (path C)</div>
+      <div class="prompt-box" id="p02c">
+        <button class="copy-btn" onclick="copyPrompt('p02c',this)">Copy</button>
+        <pre>Apply StoryKernel framework to this brief.
+
+Brief summary: <span class="fill">[paste Core Transformation + Internal Problem from Stage 01]</span>
+Audience: <span class="fill">[B2B / enterprise / complex product — rational buyer who justifies to others]</span>
+Market context: <span class="fill">[what is currently changing in this industry?]</span>
+Exclusion Zone: <span class="fill">[from Stage 01]</span>
+
+STEP 1 — EXISTENTIAL THREAT MAPPING
+Identify the external market or technological shift that makes the audience's current method of operating impossible — not just difficult.
+
+Rules:
+— The Existential Threat must be external and verifiable (not a personal pain)
+— It must be something the audience already senses but cannot yet fully articulate
+— It must make the old way feel genuinely obsolete, not merely inconvenient
+
+Output:
+EXISTENTIAL THREAT: [the shift — one sentence, specific, externally verifiable]
+EVIDENCE: [2–3 concrete signals this shift is real and accelerating]
+WHY OLD METHOD FAILS: [what becomes impossible — not just harder]
+
+STEP 2 — BRAND MENTOR ROLE
+The brand is not the hero. The audience is the hero. Define the brand as the guide with empathy AND authority.
+
+Output:
+EMPATHY: [what the brand understands about the hero's fear]
+AUTHORITY: [what the brand knows that others don't — unique insight]
+MENTOR POSITIONING: [how the brand earns trust before asking for anything]
+
+STEP 3 — TALISMAN IDENTIFICATION
+The product is the tool that gives the hero access to the new world. It is not a feature set. It is the mechanism of transformation.
+
+Output:
+TALISMAN: [the product reformulated as a tool of transformation — no product nouns]
+TALISMAN ROLE: [what becomes possible with it that was impossible before]
+TRANSFORMATION ARC: Before: [state] → After: [state] — Product: [the mechanism]
+
+STEP 4 — DIMENSIONAL TIME (optional — activate only if brief has an abstract strategic idea)
+Convert the abstract positioning idea into rigid, specific design rules.
+
+Output (if activated):
+ABSTRACT IDEA: [the strategic concept]
+DESIGN RULES: [3–5 specific, visual, non-negotiable rules derived from it]
+UI MECHANIC: [one interaction or motion rule derived directly from the abstract idea]
+
+Checkpoint before moving to Stage 03:
+EXISTENTIAL THREAT: [verified as external + verifiable]
+MENTOR ROLE: [empathy + authority both defined]
+TALISMAN: [transformation arc complete, no product nouns]
+DIMENSIONAL TIME: [activated / not activated — reason]</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Layered Metaphor / Conceptual Blending (path D)</div>
+      <div class="prompt-box" id="p02d">
+        <button class="copy-btn" onclick="copyPrompt('p02d',this)">Copy</button>
+        <pre>Apply Layered Metaphor / Conceptual Blending to this brief.
+
+Brief summary: <span class="fill">[paste Core Transformation + Internal Problem from Stage 01]</span>
+Audience: <span class="fill">[premium / returnable / editorial — depth and return engagement matter]</span>
+Emotional Promise (target): <span class="fill">[one word from Stage 01]</span>
+Exclusion Zone: <span class="fill">[from Stage 01]</span>
+
+STEP 1 — THREE READ LEVELS (rough draft)
+Define what the experience communicates at each depth of attention.
+
+FIRST READ: what is communicated in under 3 seconds without reading any copy
+Rules: must work as a single image / composition — not dependent on text or interaction
+
+SECOND READ: what becomes visible through interaction, closer attention, or scrolling
+Rules: must add meaning — not just reveal more of the same
+
+DEEP READ: what rewards extended engagement or return visits
+Rules: must contain actual conceptual content — not decorative micro-detail
+
+STEP 2 — BLENDED SPACE
+Identify two input domains whose deep structures share the same underlying logic as the product's Core Transformation.
+
+Rules:
+— The domains must seem unrelated on the surface
+— Their deep structure must genuinely mirror the product's transformation
+— The Blended Space is a new conceptual object — not a metaphor, not a simile
+
+Input Domain 1: <span class="fill">[first source domain — not from the product category]</span>
+Input Domain 2: <span class="fill">[second source domain — not from the product category]</span>
+Shared deep structure: [what they share at the structural level — not surface]
+Blended Space: [the new conceptual object that exists only at their intersection]
+
+STEP 3 — SIGNAL STRUCTURE
+Map the three read levels to the Blended Space.
+
+First Read signal: [what the Blended Space communicates immediately — without words]
+Second Read signal: [what interaction or attention reveals about the Blended Space]
+Deep Read signal: [what rewards sustained engagement — conceptual payoff]
+
+Signal/Noise test: if removing any element doesn't reduce meaning — remove it.
+
+STEP 4 — REALITY BRIDGE
+What is the minimum viable expression of the Blended Space within real constraints?
+
+CORE TENSION TO PROTECT: [the one thing that cannot be removed]
+MINIMUM VIABLE EXPRESSION: [reduced scope version that preserves the central idea]
+WHAT FAILS WITHOUT THIS: [why the minimum is non-negotiable]
+
+Checkpoint before moving to Stage 03:
+THREE READ LEVELS: [all three defined, each meaningfully distinct]
+BLENDED SPACE: [identified as a new object, not a metaphor]
+CORE TENSION TO PROTECT: [named — one specific, irreducible thing]</pre>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-label">Checkpoint — what you must have before moving to Stage 03</div>
+      <ul>
+        <li>Framework selected and documented — with specific reason it fits this brief (not "it usually works")</li>
+        <li>If Ghosty Collider: Ghost passes self-test + 2 Electric Collisions with surface incompatibility AND deep resonance + 2 Cinematic Images</li>
+        <li>If Semiotic Engineering: Dominant / Residual / Emergent codes documented + Gap identified + Smashable Asset named</li>
+        <li>If StoryKernel: Existential Threat as external verifiable shift + Brand Mentor role + Talisman identified</li>
+        <li>If Layered Metaphor: Blended Space identified + three read levels roughed out</li>
+        <li>If parallel test: both frameworks run to completion — comparison at Stage 03 Selection</li>
+      </ul>
+    </div>
+
+    <div class="to-next">
+      <div class="to-next-label">How this becomes input for Stage 03</div>
+      <ul>
+        <li>The framework output — whatever it is — becomes the conceptual foundation all 3–5 concepts must be traceable back to</li>
+        <li>Ghosty Collider → Strongest Collision + Cinematic Images anchor all concepts; Ghost must be visible in each</li>
+        <li>Semiotic Engineering → Emergent Codes define the territory; Dominant Codes define what to refuse</li>
+        <li>StoryKernel → Existential Threat drives the narrative; Talisman defines the product's role in each concept</li>
+        <li>Layered Metaphor → Blended Space defines the conceptual object; three-read structure becomes the concept architecture</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── STAGE 03 ── -->
+<div class="phase" onclick="this.classList.toggle('open')">
+  <div class="phase-num-col">
+    <span class="phase-num claude">03</span>
+    <span class="phase-badge badge-claude">Claude</span>
+    <span class="phase-time">30 min</span>
+  </div>
+  <div class="phase-main">
+    <div class="phase-title">Concept Generation + Selection</div>
+    <div class="phase-hook">Generate maximum divergence. Then select and amplify the one with the most energy.</div>
+  </div>
+  <div class="phase-toggle"><svg viewBox="0 0 14 14" fill="none" stroke-width="1.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></div>
+  <div class="phase-detail">
+    <div class="phase-io">
+      <div class="io-block"><div class="io-label">Input</div><div class="io-text">Output from Stage 02 — varies by framework: Ghost + Collision (Ghosty Collider) · Codes + Gap (Semiotic Eng.) · Threat + Talisman (StoryKernel) · Blended Space (Layered Metaphor) · Brief throughout all paths</div></div>
+      <div class="io-block"><div class="io-label">Skills used</div><div class="io-text">concept-generator (path matching selected framework) · framework-mapper (narrative structure) · critic (NFRT review)</div></div>
+    </div>
+
+    <ul class="step-list">
+      <li>Use the concept-generator prompt template that matches the framework from Stage 02. Using the wrong template produces concepts that don't draw on what was developed in Stage 02.</li>
+      <li>Before generating concepts, confirm the narrative structure with <strong>framework-mapper</strong>: Hook/Payoff, Freytag, StoryKernel, or SB7. The wrong narrative structure produces the wrong concept shape.</li>
+      <li>Generate 3–5 concepts in genuinely different emotional registers. If two feel similar, one is a variation — discard it.</li>
+      <li>The Visual Metaphor must be an image (what the camera sees), not an adjective. "Precision" is an adjective. "A watchmaker's bench at 2am, components in order under a single lamp" is an image.</li>
+      <li>Run the NFRT check on each concept. Resonance and Timeliness are non-negotiable. Novelty without Resonance is decoration.</li>
+      <li>If two frameworks were run in parallel in Stage 02 — generate one concept set from each, then use Selection + Amplification to compare.</li>
+    </ul>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Concept Generation (Ghosty Collider path)</div>
+      <div class="prompt-box" id="p03a">
+        <button class="copy-btn" onclick="copyPrompt('p03a',this)">Copy</button>
+        <pre>Generate 3–5 visual concepts from this Ghosty Collider output.
+
+Ghost: <span class="fill">[paste Ghost — abstract force, zero industry language]</span>
+Strongest Collision + Cinematic Image: <span class="fill">[paste from Stage 02]</span>
+Narrative framework: <span class="fill">[Hook/Payoff / Freytag / StoryKernel / SB7]</span>
+Audience: <span class="fill">[psychographics, fears, aspirations]</span>
+Format: <span class="fill">[landing page / campaign / brand story]</span>
+Exclusion Zone: <span class="fill">[from Stage 01]</span>
+
+Rules: no two concepts in the same emotional register · visual metaphor = what the camera sees · all 3 problem levels addressed · Ghost must be traceable (GHOST VISIBLE = yes) · if a concept could appear in this category already — discard it
+
+For each concept:
+CONCEPT [N]: [title] · LOGLINE: [one sentence] · CORE TENSION: [contradiction] · EMOTIONAL PROMISE: [one word] · VISUAL METAPHOR: [what the camera sees] · WHY NOW: [cultural reason] · GHOST VISIBLE: [yes/no + how] · 3-LEVEL PROBLEM: External / Internal / Philosophical · NFRT: N[·] F[·] R[·] T[·] · RISK: [what could fail]</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Concept Generation (Semiotic Engineering path)</div>
+      <div class="prompt-box" id="p03b">
+        <button class="copy-btn" onclick="copyPrompt('p03b',this)">Copy</button>
+        <pre>Generate 3–5 visual concepts from this Semiotic Engineering analysis.
+
+Dominant codes (refuse): <span class="fill">[from Stage 02]</span>
+Emergent codes (own this territory): <span class="fill">[from Stage 02]</span>
+Gap identified: <span class="fill">[what no competitor owns]</span>
+Narrative framework: <span class="fill">[Hook/Payoff / Freytag / StoryKernel / SB7]</span>
+Audience: <span class="fill">[psychographics]</span> · Exclusion Zone: <span class="fill">[from Stage 01]</span>
+
+Rules: each concept occupies a different emergent code territory · no dominant codes · Metafunction test on every visual element · if a concept could appear in this category already — discard it
+
+For each concept:
+CONCEPT [N]: [title] · CODE TERRITORY: [which emergent code] · LOGLINE: [one sentence] · CORE TENSION: [contradiction] · EMOTIONAL PROMISE: [one word] · VISUAL METAPHOR: [what the camera sees] · SMASHABLE ASSET: [one element recognisable without a logo] · WHY NOW: [cultural shift] · NFRT: N[·] F[·] R[·] T[·] · RISK: [what could fail]</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Concept Generation (StoryKernel path)</div>
+      <div class="prompt-box" id="p03c">
+        <button class="copy-btn" onclick="copyPrompt('p03c',this)">Copy</button>
+        <pre>Generate 3–5 visual concepts from this StoryKernel analysis.
+
+Existential Threat: <span class="fill">[market shift making old methods impossible]</span>
+Brand as Mentor: <span class="fill">[what the brand knows + its authority]</span>
+Talisman: <span class="fill">[product as the tool the hero needs]</span>
+New potential: <span class="fill">[where the hero arrives after]</span>
+Audience: <span class="fill">[professional, rational — what they justify to others]</span>
+Exclusion Zone: <span class="fill">[from Stage 01]</span>
+Dimensional Time (optional): <span class="fill">[abstract strategic idea to convert to design rules — or leave blank]</span>
+
+Rules: lead with the Existential Threat, not personal pain · brand is never the hero · each concept answers: why is the old way now impossible?
+
+For each concept:
+CONCEPT [N]: [title] · EXISTENTIAL THREAT: [external verifiable shift] · MENTOR POSITIONING: [how trust is earned] · TALISMAN ROLE: [what product enables] · LOGLINE: [one sentence] · VISUAL SYSTEM PRINCIPLE: [if Dimensional Time] · WHY NOW: [market evidence] · NFRT: N[·] F[·] R[·] T[·] · RISK: [what could fail]</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Concept Generation (Layered Metaphor path)</div>
+      <div class="prompt-box" id="p03d">
+        <button class="copy-btn" onclick="copyPrompt('p03d',this)">Copy</button>
+        <pre>Generate 3–5 visual concepts using Layered Metaphor / Conceptual Blending.
+
+Product transformation: <span class="fill">[Core Transformation from Stage 01]</span>
+Blended Space foundation: <span class="fill">[two input domains from Stage 02]</span>
+Audience: <span class="fill">[premium / returnable / editorial]</span>
+Narrative framework: <span class="fill">[Hook/Payoff / Freytag / SB7]</span>
+Exclusion Zone: <span class="fill">[from Stage 01]</span>
+
+Rules: Blended Space must be a new conceptual object (not a metaphor) · First Read must stop a fast scroll · Signal/Noise test: if removing an element doesn't feel like a loss — remove it
+
+For each concept:
+CONCEPT [N]: [title] · BLENDED SPACE: [two domains + new object at intersection] · LOGLINE: [one sentence] · FIRST READ: [communicates in 3 seconds] · SECOND READ: [what interaction reveals] · DEEP READ: [what rewards return] · VISUAL METAPHOR: [what the camera sees] · NFRT: N[·] F[·] R[·] T[·] · RISK: [what could fail]</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Selection + Amplification (all paths)</div>
+      <div class="prompt-box" id="p03e">
+        <button class="copy-btn" onclick="copyPrompt('p03e',this)">Copy</button>
+        <pre>Review these [N] concepts. Apply NFRT — Novelty / Feasibility / Resonance / Timeliness.
+Select the concept where Resonance and Timeliness are both strongest.
+Amplify it 30–40%. Remove all hedges. Full commitment — no safety net.
+
+Output:
+SELECTED: [title + one-line reason]
+AMPLIFIED LOGLINE: [rewrite at full commitment]
+AMPLIFIED TENSION: [conflict made sharper]
+AMPLIFIED VISUAL METAPHOR: [image made more specific]
+WHAT WE ARE REFUSING: [the safer version we chose not to do]
+HAPPY MISTAKE POTENTIAL: [one constraint that could become a visual signature]
+
+CONCEPT FINGERPRINT:
+Describe this concept in exactly 10 words — to someone who has never seen the brief.
+[10-word description]
+Test 1: Could someone name an existing site from these 10 words? [yes → rewrite / no → proceed]
+Test 2: Could someone guess the product category? [yes → rewrite / no → proceed]</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Visual Metaphor Contamination Check — run before Selection</div>
+      <div class="prompt-box" id="p03_contam">
+        <button class="copy-btn" onclick="copyPrompt('p03_contam',this)">Copy</button>
+        <pre>Check the Visual Metaphors in these concepts against overrepresented Claude-aesthetic clusters.
+
+Concepts and their Visual Metaphors: <span class="fill">[paste all concepts with their Visual Metaphor field]</span>
+
+For each Visual Metaphor, check whether it falls into any of these clusters:
+— Precision instruments (watchmaker's bench, surgical tools, measuring devices)
+— Organic biological processes (mycelial networks, fermentation, metamorphosis, growth rings)
+— Crystallization / material transformation (crystal formation, erosion, geological strata)
+— Cartographic / architectural abstraction (floor plans, topographic maps, blueprints)
+— Astronomical phenomena (star charts, orbital mechanics, deep space)
+— Natural light phenomena (refraction, caustics, dawn light)
+
+For each Visual Metaphor in a detected cluster:
+METAPHOR: [paste]
+CLUSTER: [which one]
+JUSTIFICATION: [why is this cluster — and no other — the only possible expression of this Core Tension?]
+ALTERNATIVE: [one Visual Metaphor from completely outside this cluster that could serve the same Core Tension]
+VERDICT: [proceed with original / proceed with alternative / generate both and decide at selection]
+
+If no clusters detected for a concept: mark as CLEAR and proceed.</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Concept Kill Test — run after Selection + Amplification</div>
+      <div class="prompt-box" id="p03_kill">
+        <button class="copy-btn" onclick="copyPrompt('p03_kill',this)">Copy</button>
+        <pre>Run the Concept Kill Test on the selected concept.
+
+Selected concept: <span class="fill">[paste title + amplified logline + amplified Visual Metaphor]</span>
+Core Tension: <span class="fill">[from concept]</span>
+
+Formulate the strongest possible argument against this concept.
+Not weak objections — the best three-sentence anti-case a skeptical senior creative director could make.
+
+Rules:
+— The anti-case cannot be "it might not work technically"
+— It must engage with the concept on its own terms — why the idea itself might be wrong or weaker than it appears
+— Do not argue against the brief. Argue against the concept's response to the brief.
+
+ANTI-CASE: [three sentences — the strongest argument against]
+RESPONSE: [one sentence — the specific reason the concept survives this challenge]
+WHAT THE ANTI-CASE REVEALS: [the real vulnerability to watch during execution — even if the concept is ultimately right]
+
+Decision:
+If ANTI-CASE sounds more convincing than RESPONSE → return to Stage 03 and generate new concepts.
+If RESPONSE holds → proceed to Stage 04 with WHAT THE ANTI-CASE REVEALS as a named execution risk.</pre>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-label">Checkpoint — what you must have before moving to Stage 04</div>
+      <ul>
+        <li>3–5 concepts, each structurally distinct — different emotional register, tension, visual territory</li>
+        <li>One selected primary concept with amplified logline, tension, and visual metaphor</li>
+        <li>"What we are refusing" explicitly named</li>
+        <li>Ghosty Collider path: conceptual foundation traceable in selected concept</li>
+        <li>Semiotic Engineering path: selected concept occupies emergent code territory — confirmed not dominant codes</li>
+        <li>StoryKernel path: Existential Threat drives the concept; brand in Mentor role</li>
+        <li>Layered Metaphor path: all three read levels defined for the selected concept</li>
+        <li>Internal and Philosophical problem levels addressed — not just External</li>
+      </ul>
+    </div>
+
+    <div class="to-next">
+      <div class="to-next-label">How this becomes input for Stage 04</div>
+      <ul>
+        <li>Visual Metaphor → anchors imagery direction — all reference analysis looks for principles supporting this image</li>
+        <li>Emotional Promise → defines the target for the color system — what must the dominant color make someone feel?</li>
+        <li>Core Tension → defines what typography must express — the typographic character must carry this tension</li>
+        <li>Chosen narrative framework → structures the Scene Breakdown and determines how color / typography / motion shift through the scroll</li>
+        <li>Happy Mistake Potential → one constraint to bring into Stage 04 reference analysis</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── STAGE 04 ── -->
+<div class="phase" onclick="this.classList.toggle('open')">
+  <div class="phase-num-col">
+    <span class="phase-num claude">04</span>
+    <span class="phase-badge badge-claude">Claude</span>
+    <span class="phase-time">40 min</span>
+  </div>
+  <div class="phase-main">
+    <div class="phase-title">Visual Language + Reference Analysis</div>
+    <div class="phase-hook">Every visual rule must follow from the concept — not from taste, not from trend</div>
+  </div>
+  <div class="phase-toggle"><svg viewBox="0 0 14 14" fill="none" stroke-width="1.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></div>
+  <div class="phase-detail">
+    <div class="phase-io">
+      <div class="io-block"><div class="io-label">Input</div><div class="io-text">Selected + amplified concept · Concept Fingerprint · Anti-Case from Kill Test · Visual Metaphor · Core Tension · Creative Director Signature (Current Obsession as mandatory reference)</div></div>
+      <div class="io-block"><div class="io-label">Skills used</div><div class="io-text">reference-analyst (v2) · visual-tension · typography-selector · color-fundamentals</div></div>
+    </div>
+
+    <ul class="step-list">
+      <li><strong>Stage 04a — Reference Harvest first.</strong> 3–5 references, all from outside the product category. One must come from your Current Obsession (Creative Director Signature). Attach images directly to the Claude conversation — Claude will analyze them. Each reference answers: what does it teach? what must we refuse from it?</li>
+      <li><strong>Stage 04b — Visual Language Synthesis second.</strong> After all references are analyzed, run synthesis: extract 5 Visual Principles written as directives (not descriptions). Each principle must trace to Core Tension, Visual Metaphor, or Emotional Promise. A junior designer should be able to follow it as an instruction.</li>
+      <li>Typography and color run after 04b — they are informed by the Visual Principles, not parallel to them. The typographic character and color states express the Visual Principles, not the other way around.</li>
+      <li>The Anti-Case from Stage 03 Kill Test is an active input here: the WHAT THE ANTI-CASE REVEALS vulnerability should be addressed explicitly in at least one Visual Principle.</li>
+      <li>Apply Reality Bridge: name the one Visual Principle that cannot be removed without losing the concept. This becomes Core Tension to Protect in Stage 05.</li>
+    </ul>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Stage 04a · Reference Harvest (attach images directly to this message)</div>
+      <div class="prompt-box" id="p04a">
+        <button class="copy-btn" onclick="copyPrompt('p04a',this)">Copy</button>
+        <pre>Analyze these references for this concept. Attach images directly to this message — or provide URLs, names, or descriptions. Maximum 3–5 references. All must come from outside the product category.
+
+Core Tension: <span class="fill">[from Stage 03]</span>
+Visual Metaphor: <span class="fill">[from Stage 03 — what the camera sees]</span>
+Current Obsession: <span class="fill">[from Creative Director Signature — this must appear as one of the references]</span>
+Anti-Case vulnerability to address: <span class="fill">[WHAT THE ANTI-CASE REVEALS from Stage 03 Kill Test]</span>
+
+For each reference (image, URL, name, or description):
+
+REFERENCE: [name / "attached image N"]
+SOURCE DOMAIN: [what type — not the product category]
+OUTSIDE CATEGORY: [yes / no + reason if no]
+TEACHES: [one specific visual decision this reference makes — stated as a principle, not a feature description]
+REFUSES: [the one thing we cannot take from this — what would make us look like this reference instead of our concept]
+CONNECTION TO CORE TENSION: [one sentence — how this connects to Core Tension, even if indirect]
+CULTURAL MOMENT: [what this reference responds to culturally]
+
+For the Current Obsession reference, add:
+WHY THIS OBSESSION IS RELEVANT: [the non-obvious connection to Core Tension — if the connection is obvious, look for a deeper one]</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Stage 04b · Visual Language Synthesis</div>
+      <div class="prompt-box" id="p04b_synth">
+        <button class="copy-btn" onclick="copyPrompt('p04b_synth',this)">Copy</button>
+        <pre>Synthesize the reference analysis into a Visual Language — 5 directives that define how this concept looks and behaves.
+
+Core Tension: <span class="fill">[from Stage 03]</span>
+Visual Metaphor: <span class="fill">[from Stage 03]</span>
+Emotional Promise: <span class="fill">[one word]</span>
+Stage 04a outputs: <span class="fill">[paste all TEACHES + REFUSES from each reference]</span>
+
+Step 1 — Pattern Recognition:
+SHARED PRINCIPLES: [what multiple references share — the rules that appear across sources]
+DIFFERENTIATING MOVE: [what separates the exceptional references from the merely competent]
+GAP: [what none of the references do that this concept specifically requires]
+
+Step 2 — 5 Visual Principles (directives, not descriptions):
+For each: write as an instruction a junior designer could follow. Test: does it make a specific visual choice easier or impossible?
+
+Bad: "Typography should feel editorial"
+Good: "Headline type occupies minimum 35% viewport height — reduction is achieved by removing words, not reducing scale"
+
+Bad: "Color palette should feel restrained"
+Good: "Primary color appears in one element per section only. Every other element is neutral. Tension is created by this single departure."
+
+VISUAL PRINCIPLE 1: [directive] — TRACES TO: [Core Tension / Visual Metaphor / Emotional Promise]
+VISUAL PRINCIPLE 2: [directive] — TRACES TO: [...]
+VISUAL PRINCIPLE 3: [directive] — TRACES TO: [...]
+VISUAL PRINCIPLE 4: [directive] — TRACES TO: [...]
+VISUAL PRINCIPLE 5: [directive] — TRACES TO: [...]
+
+Step 3 — Formal Vocabulary:
+ADOPT: [3–5 specific visual moves derived from references — stated as actions]
+REFUSE: [3–5 specific moves that would make output look like references instead of concept]
+
+Step 4 — Reality Bridge:
+CORE TENSION TO PROTECT: [one Visual Principle that cannot be removed without losing the concept]
+MINIMUM VIABLE EXPRESSION: [reduced scope version that preserves the central tension]</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Typography Direction (informed by Stage 04b Visual Principles)</div>
+      <div class="prompt-box" id="p04c_typo">
+        <button class="copy-btn" onclick="copyPrompt('p04c_typo',this)">Copy</button>
+        <pre>Define the typographic character and propose 2–3 font directions.
+
+Core Tension: <span class="fill">[from Stage 03]</span>  ·  Emotional Promise: <span class="fill">[one word]</span>
+Audience: <span class="fill">[type]</span>  ·  Industry: <span class="fill">[context]</span>  ·  Narrative framework: <span class="fill">[name]</span>
+What type must never feel like: <span class="fill">[specific prohibition]</span>
+
+Step 1 — Character (no font names yet):
+ROLE OF TYPE IN THIS CONCEPT · WEIGHT CONTRAST ROLE · HISTORICAL/CULTURAL SIGNAL · PROHIBITION
+
+Step 2 — Propose 2–3 directions. For each:
+DIRECTION [N] · HEADLINE FAMILY [font + weights] · BODY FAMILY [font + weight] · MONO/ACCENT (if applicable) · PAIRING LOGIC [structural reason] · WHAT THIS ARGUES [before a word is read] · INDUSTRY SIGNAL [comply / break / own emergent] · RISK</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Color System (informed by Stage 04b Visual Principles)</div>
+      <div class="prompt-box" id="p04d_color">
+        <button class="copy-btn" onclick="copyPrompt('p04d_color',this)">Copy</button>
+        <pre>Generate 3 color palette directions for this concept.
+
+Emotional Promise: <span class="fill">[one word]</span>  ·  Core Tension: <span class="fill">[from Stage 03]</span>
+Atmosphere: <span class="fill">[tension / precision / discovery / warmth / disruption]</span>
+Narrative arc: <span class="fill">[Freytag acts or Hook/Payoff]</span>
+Category dominant codes: <span class="fill">[colors everyone in this space uses — to differentiate from]</span>
+Exclusion Zone: <span class="fill">[specific color prohibitions]</span>
+
+For each palette direction:
+PALETTE [N]: [name] · CONCEPT THIS EXPRESSES · Primary 60% [quality + emotional register + industry signal] · Secondary 30% [quality + relationship to primary] · Accent 10% [quality + specific functional role]
+Narrative states: Exposition / Rising Action / Climax / Resolution
+WHAT THIS PALETTE REFUSES · RISK</pre>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-label">Checkpoint — what you must have before moving to Stage 05</div>
+      <ul>
+        <li>3–5 references analyzed in Stage 04a — each with TEACHES + REFUSES. Current Obsession reference present with non-obvious Core Tension connection named.</li>
+        <li>Stage 04b complete — 5 Visual Principles written as directives, not descriptions. Each traces to Core Tension, Visual Metaphor, or Emotional Promise.</li>
+        <li>Anti-Case vulnerability from Stage 03 Kill Test addressed in at least one Visual Principle.</li>
+        <li>Pacing arc defined across all five Freytag acts — each section has a named visual state</li>
+        <li>Cinematic tension technique selected and translated to this medium</li>
+        <li>Typographic character defined (role, weight contrast, cultural signal) before any font name is committed to</li>
+        <li>Typography direction selected — pairing logic is structural; differentiates from industry dominant codes</li>
+        <li>Color system: semantic layer (primary / secondary / accent) + narrative layer (color per Freytag act)</li>
+        <li>Reality Bridge completed: one thing that must never be removed named explicitly</li>
+      </ul>
+    </div>
+
+    <div class="to-next">
+      <div class="to-next-label">How this becomes input for Stage 05</div>
+      <ul>
+        <li>All visual rules → become Visual Principles in the CDD (5–7 rules, each traceable to the concept)</li>
+        <li>Reference principles → inform the Scene Breakdown's visual descriptions per section</li>
+        <li>Typographic character + selected direction → become CSS font variable decisions in Stage 06</li>
+        <li>Color semantic layer → CSS custom properties per element role; narrative layer → --color-exposition / --color-rising / --color-climax / --color-resolution</li>
+        <li>Pacing arc + motion language → scroll trigger specifications in the Scene Breakdown</li>
+        <li>Reality Bridge → "Core Tension to Protect" explicitly named in the CDD</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── STAGE 05 ── -->
+<div class="phase" onclick="this.classList.toggle('open')">
+  <div class="phase-num-col">
+    <span class="phase-num claude">05</span>
+    <span class="phase-badge badge-claude">Claude</span>
+    <span class="phase-time">35 min</span>
+  </div>
+  <div class="phase-main">
+    <div class="phase-title">Creative Direction Document</div>
+    <div class="phase-hook">The score. Everything that follows is a performance of this document.</div>
+  </div>
+  <div class="phase-toggle"><svg viewBox="0 0 14 14" fill="none" stroke-width="1.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></div>
+  <div class="phase-detail">
+    <div class="phase-io">
+      <div class="io-block"><div class="io-label">Input</div><div class="io-text">Stage 01: Core Transformation · Internal Problem · Exclusion Zone · Whitespace Opportunity — Stage 02: Framework used + full output — Stage 03: Selected concept · Amplified Logline · Core Tension · Visual Metaphor · Emotional Promise · What We Are Refusing — Stage 04: Reference principles · Pacing arc · Typographic system · Color system · Reality Bridge</div></div>
+      <div class="io-block"><div class="io-label">Skills used</div><div class="io-text">Synthesis of all prior skills — framework-mapper · ghosty-collider / semiotic-codes / concept-generator · reference-analyst · visual-tension · typography-selector · color-fundamentals · critic</div></div>
+    </div>
+
+    <ul class="step-list">
+      <li>The CDD is not a summary of what you have done — it is the single document Cursor receives as its only context. Complete, self-contained, requiring no prior knowledge of the process.</li>
+      <li>Core Idea: one sentence, no marketing language, must produce a specific image. If a competitor could claim it — rewrite it. This is the first line Cursor reads and the anchor for every decision that follows.</li>
+      <li>Scene Breakdown is the most critical section — every scroll section described with narrative stage, visible elements, user emotion, color state, and motion trigger. No gaps, no TBDs.</li>
+      <li>Quality Criteria must be specific and testable. "Looks premium" is not a criterion. "The hook communicates the core tension in under 3 seconds without reading the headline" is a criterion.</li>
+      <li>Adapt the CDD structure to the framework used in Stage 02 — the Conceptual Foundation section carries different fields for each path. The template marks which fields are framework-variable.</li>
+      <li>Save the completed document as <strong>creative-direction-document.md</strong> in the root of your project folder. Paste into Cursor chat AND save to disk.</li>
+    </ul>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — CDD Synthesis</div>
+      <div class="prompt-box" id="p05a">
+        <button class="copy-btn" onclick="copyPrompt('p05a',this)">Copy</button>
+        <pre>Synthesise a Creative Direction Document from all prior stage outputs.
+This document will be passed in full to Cursor as its sole execution context.
+
+─── INPUTS ───────────────────────────────────────
+
+PROJECT CONTEXT BLOCK: <span class="fill">[paste your Project Context Block — parameters calibrate the CDD depth and risk level]</span>
+
+STAGE 01 — Brief
+Core Transformation: <span class="fill">[paste]</span>
+Internal Problem: <span class="fill">[paste]</span>
+Exclusion Zone: <span class="fill">[paste — specific prohibitions]</span>
+Whitespace Opportunity: <span class="fill">[paste]</span>
+
+STAGE 02 — Framework output
+Framework used: <span class="fill">[Ghosty Collider / Semiotic Engineering / StoryKernel / Layered Metaphor]</span>
+Framework output: <span class="fill">[paste in full]</span>
+
+STAGE 03 — Selected concept
+Amplified Logline: <span class="fill">[paste]</span>  ·  Core Tension: <span class="fill">[paste]</span>
+Visual Metaphor: <span class="fill">[what the camera sees]</span>  ·  Emotional Promise: <span class="fill">[one word]</span>
+What We Are Refusing: <span class="fill">[the safer version not taken]</span>
+Narrative framework: <span class="fill">[Hook/Payoff / Freytag / StoryKernel / SB7]</span>
+
+STAGE 04 — Visual language
+Reference principles: <span class="fill">[paste]</span>  ·  Pacing arc: <span class="fill">[Freytag states]</span>
+Typographic system: <span class="fill">[character + selected direction]</span>
+Color system: <span class="fill">[semantic layer + narrative layer]</span>
+Reality Bridge: <span class="fill">[core tension to protect + minimum viable expression]</span>
+
+─── OUTPUT FORMAT ────────────────────────────────
+
+CREATIVE DIRECTION DOCUMENT
+Project: [name]  ·  Framework path: [name]  ·  Date: [date]
+
+CORE IDEA
+[One sentence. Specific image. No competitor could claim this.]
+
+NARRATIVE SPINE
+Framework: [name]
+Arc: [the emotional journey from first scroll to last — one paragraph]
+Scroll structure: [section names mapped to narrative stages — use framework language, not "hero / features / CTA"]
+
+KEY MESSAGES — maximum 3, in narrative order
+1.  2.  3.
+
+CONCEPTUAL FOUNDATION  [fill the field matching your framework]
+Ghosty Collider → Ghost: [paste] · Cinematic Image: [paste]
+Semiotic Engineering → Emergent Code Territory: [paste] · Smashable Asset: [paste]
+StoryKernel → Existential Threat: [paste] · Talisman: [paste]
+Layered Metaphor → Blended Space: [paste] · First / Second / Deep Read: [paste]
+
+VISUAL PRINCIPLES — 5–7 rules, each making a decision (not describing a quality)
+1.  2.  3.  4.  5.
+
+TRACEABILITY CHECK — complete before Stage 05.5
+For each Visual Principle, answer:
+· Which Core Tension does this protect?
+· Which aspect of the Visual Metaphor does this express?
+· What should the viewer feel in the first 3 seconds from this principle?
+· What would break in the concept if we removed it?
+
+Rule: if a Visual Principle cannot answer all four questions — it is decoration. Remove it or rewrite it as concept-traceable before moving to Stage 05.5.
+
+TYPOGRAPHIC SYSTEM
+Headline: [font + weights] — Role: [what this type argues]
+Body: [font + weight] — Role: [readability register]
+Accent/Mono: [font] — Role: [functional elements]
+Weight contrast: [dominant/supporting — what it expresses]
+Scale: Display / Headline / Subhead / Body / Caption
+
+COLOR SYSTEM
+Primary [hex]: [emotional target]  ·  Secondary [hex]: [relationship]  ·  Accent [hex]: [appears only when: condition]
+--color-exposition: [hex]  ·  --color-rising: [hex]  ·  --color-climax: [hex]  ·  --color-resolution: [hex]
+Usage rule: [one specific constraint on the accent]
+
+SCENE BREAKDOWN — every section, no gaps, no TBDs
+Per section: SECTION [name] · Narrative function · Visible elements · User emotion · Color state · Motion trigger
+
+CORE TENSION TO PROTECT
+[The one thing that cannot be removed regardless of scope, time, or feedback pressure.]
+
+QUALITY CRITERIA — specific and testable
+1.  2.  3.</pre>
+      </div>
+    </div>
+
+    <div class="output-block"><strong>Save as:</strong> creative-direction-document.md · project root · paste into Cursor chat AND save to disk · never summarise, never paraphrase</div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Adversarial CDD Pass (run after generating the CDD)</div>
+      <div class="prompt-box" id="p05_adv">
+        <button class="copy-btn" onclick="copyPrompt('p05_adv',this)">Copy</button>
+        <pre>The CDD has been generated. Now argue against it.
+
+CDD Core Idea: <span class="fill">[paste]</span>
+CDD Visual Principles: <span class="fill">[paste all 5–7]</span>
+CDD Core Tension to Protect: <span class="fill">[paste]</span>
+
+Formulate the strongest possible case that this CDD is still generic.
+
+1. FAMILIAR DIRECTION TEST: Does this CDD describe a direction that has been executed before — in this category or in adjacent award-winning work? Name the closest existing execution you can think of.
+2. LANGUAGE TEST: Could these Visual Principles be applied to a different brief in the same category and produce a similarly valid result? If yes — they are not specific enough to this concept.
+3. TENSION TEST: Is the Core Tension to Protect truly irreducible — or is it a more generic creative principle in disguise?
+
+ADVERSARIAL VERDICT:
+Strong — proceed to Stage 05.5: the CDD describes a direction that could not have been generated from a different brief or framework combination
+Weak — return to revise: the direction is familiar or the Visual Principles are not specific enough to this concept
+
+If Weak, identify:
+FIELD TO REVISE: [which section is still generic]
+WHY: [what makes it still familiar]
+DIRECTION: [what would make it specific to this concept only]</pre>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-label">Checkpoint — what you must have before crossing the handoff</div>
+      <ul>
+        <li>Core Idea in one sentence that no competitor could claim — tested against the Exclusion Zone</li>
+        <li>Narrative Spine with section names matching the chosen framework's language — not generic UI names</li>
+        <li>Conceptual Foundation section filled for the framework actually used — no empty fields</li>
+        <li>Scene Breakdown with every section described — narrative function, visible elements, emotion, color state, motion trigger</li>
+        <li>Typographic System and Color System both complete — every variable named and justified</li>
+        <li>Visual Principles that make decisions — each answers a specific design question, not describes a quality</li>
+        <li>Traceability Check completed — every Visual Principle connected to Core Tension, Visual Metaphor, and a named viewer feeling. Any principle that failed the check was removed or rewritten.</li>
+        <li>Core Tension to Protect named as one specific, irreducible thing</li>
+        <li>Quality Criteria that are testable — not descriptive</li>
+        <li>File saved as creative-direction-document.md in project root</li>
+      </ul>
+    </div>
+
+    <div class="to-next">
+      <div class="to-next-label">How this becomes input for Stage 05.5</div>
+      <ul>
+        <li>CSS variable system (`:root {}` block) → pasted verbatim into Stage 05.5 prompt — no interpretation, no translation</li>
+        <li>Typographic System → rendered directly in Style Reference; validates weight contrast and scale before Cursor execution</li>
+        <li>Color System (semantic + narrative layers) → rendered as palette swatches with roles; validates that `--color-exposition` and `--color-climax` feel meaningfully different</li>
+        <li>Scene Breakdown → determines which concept section(s) to render: Hero always + product-type selection</li>
+        <li>Core Tension to Protect → the test that the rendered Hero section must pass in 3 seconds without reading text</li>
+        <li>creative-direction-document.md on disk → passes unchanged into Cursor after Stage 05.5 validates the system</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- end phases -->
+
+<!-- ── STAGE 05.5 ── -->
+<div class="zone-header" style="padding-top: 32px;">
+  <p class="zone-label claude">Stage 05.5 · Claude · Optional but recommended</p>
+  <h2 class="zone-title">Concept Proof —<br><em>rendered before handoff</em></h2>
+  <p class="zone-desc">Validate the visual system in a real rendered environment before Cursor execution begins. Two deliverables: a Style Reference showing the type and colour system, and 1–3 concept sections proving the system works at narrative scale. No new tools. No interpretation. Claude executes the CDD variables directly.</p>
+</div>
+
+<div class="phases">
+<div class="phase" onclick="this.classList.toggle('open')">
+  <div class="phase-num-col">
+    <span class="phase-num claude">05.5</span>
+    <span class="phase-badge badge-claude">Claude</span>
+    <span class="phase-time">20 min</span>
+  </div>
+  <div class="phase-main">
+    <div class="phase-title">HTML Concept Proof + Style Reference</div>
+    <div class="phase-hook">Render the system before committing to execution — one file, two deliverables, zero ambiguity</div>
+  </div>
+  <div class="phase-toggle"><svg viewBox="0 0 14 14" fill="none" stroke-width="1.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></div>
+  <div class="phase-detail">
+    <div class="phase-io">
+      <div class="io-block"><div class="io-label">Input</div><div class="io-text">creative-direction-document.md — specifically: CSS variable system (`:root {}`), Typographic System, Color System, Scene Breakdown, Core Tension to Protect</div></div>
+      <div class="io-block"><div class="io-label">Output</div><div class="io-text">Single HTML artifact — Deliverable A: Style Reference · Deliverable B: 1–3 rendered concept sections</div></div>
+    </div>
+
+    <ul class="step-list">
+      <li>This stage does not interpret the CDD in words — it executes the CSS variables directly. Paste the `:root {}` block verbatim into the prompt. The rendered output reflects your system, not Claude's aesthetic defaults.</li>
+      <li>Deliverable A (Style Reference) is always generated. Deliverable B section count depends on project type — select from the table below.</li>
+      <li>If the Hero section fails the 3-second test — Core Tension is not visible without reading — stop. Return to Stage 05, identify which CDD field is underspecified, correct it. Do not proceed to Cursor with a failing concept proof.</li>
+      <li>Interactive states (hover, pressed) in the Style Reference are lightweight CSS only — no JavaScript. The goal is to validate the system, not to prototype a component library.</li>
+      <li>This file is throwaway. It is a proof, not a deliverable. It does not replace the CDD. Cursor builds from the CDD — not from this file.</li>
+    </ul>
+
+    <div style="margin: 24px 0; padding: 20px 22px; border: 1px solid var(--accent-dim); background: rgba(196,149,74,0.06);">
+      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px;">⬡ Section Selection — Deliverable B</div>
+      <div style="font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 16px;">Hero is always rendered. Select one additional section based on project type — or none if the brief is purely brand/campaign.</div>
+      <div style="display: grid; gap: 2px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">Any project</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Hero section (mandatory)</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">E-commerce</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Hero + Product Listing Page or Product Detail Page</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">B2B / SaaS / Complex product</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Hero + USP Featured section</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">Editorial / Content platform</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Hero + Blog Post layout</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">Brand / Campaign / Portfolio</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Hero only</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Deliverable A: Style Reference</div>
+      <div class="prompt-box" id="p055a">
+        <button class="copy-btn" onclick="copyPrompt('p055a',this)">Copy</button>
+        <pre>Build a Style Reference HTML page from this CDD visual system.
+This is not a design exercise — execute the variables exactly as defined. No aesthetic interpretation.
+
+CSS VARIABLE SYSTEM (paste verbatim from CDD):
+<span class="fill">:root {
+  [paste full :root block from CDD — all --color, --font, --scale variables]
+}</span>
+
+TYPOGRAPHY SYSTEM (from CDD):
+Headline family: <span class="fill">[font + weights]</span> — Role: <span class="fill">[what it argues]</span>
+Body family: <span class="fill">[font + weight]</span> — Role: <span class="fill">[readability register]</span>
+Accent/Mono: <span class="fill">[font if applicable]</span> — Role: <span class="fill">[functional elements]</span>
+Scale: Display / Headline / Subhead / Body / Caption
+
+COLOR SYSTEM (from CDD):
+Primary <span class="fill">[hex]</span>: <span class="fill">[emotional target]</span>
+Secondary <span class="fill">[hex]</span>: <span class="fill">[relationship to primary]</span>
+Accent <span class="fill">[hex]</span>: appears only when <span class="fill">[condition from CDD]</span>
+Narrative states: --color-exposition / --color-rising / --color-climax / --color-resolution
+
+Build this Style Reference with three sections:
+
+SECTION 1 — Typography Scale
+Render each level: Display · Headline · Subhead · Body · Caption
+For each: show actual rendered text + label with semantic role in var(--font-mono) beneath
+Use a short text that reflects the Core Tension — not "The quick brown fox"
+Background: var(--color-exposition)
+
+SECTION 2 — Colour Palette
+Render each colour as a horizontal bar (full width, 80px height)
+Label: variable name · hex value · semantic role · narrative state
+Group: Semantic layer (primary / secondary / accent) | Narrative layer (exposition / rising / climax / resolution)
+Show accent colour only in a narrow band — its restraint is part of the system
+
+SECTION 3 — Base Components
+Button: default · hover · pressed · disabled states — CSS transitions only, no JS
+Input field: empty · focused · filled states
+Card: one content block demonstrating the type hierarchy in context
+
+Rules:
+— All values from CSS variables — zero hardcoded hex or font-family inline
+— Background, text, border: all from the semantic layer
+— No decorative elements not defined in the CDD
+— Label every component state in var(--font-mono) so the system is readable as a reference</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Deliverable B: Concept Section(s)</div>
+      <div class="prompt-box" id="p055b">
+        <button class="copy-btn" onclick="copyPrompt('p055b',this)">Copy</button>
+        <pre>Build <span class="fill">[Hero only / Hero + USP / Hero + PLP / Hero + PDP / Hero + Blog Post]</span> as a rendered HTML concept proof.
+
+CSS VARIABLE SYSTEM (paste verbatim — same block as Deliverable A):
+<span class="fill">:root { [...] }</span>
+
+FROM CDD — HERO SECTION:
+Narrative stage: Exposition
+Scene Breakdown: <span class="fill">[paste verbatim: visible elements · user emotion · color state · motion trigger]</span>
+Core Tension to Protect: <span class="fill">[paste verbatim]</span>
+Visual Metaphor: <span class="fill">[what the camera sees]</span>
+Emotional Promise: <span class="fill">[one word]</span>
+Headline (if specified): <span class="fill">[from CDD or leave as placeholder]</span>
+Exclusion Zone: <span class="fill">[paste relevant prohibitions]</span>
+
+<span class="fill">[If second section — paste its Scene Breakdown fields in the same format]</span>
+
+Rules:
+— All CSS from variables — no hardcoded values
+— Headline: var(--font-headline), var(--scale-display)
+— Body: var(--font-body), var(--scale-body)
+— Color state matches narrative stage from CDD
+— Negative space carries a functional role — do not fill it
+— Image areas: placeholder div with correct aspect ratio + alt text describing the Visual Metaphor
+— No motion/JS — static proof only
+
+3-SECOND TEST (self-check before outputting):
+Close your eyes. Open for 3 seconds. Close again.
+— Is the Core Tension felt before any text is read?
+— Is one element dominant — or are three competing?
+— Does the color state match the named narrative stage?
+If any answer is no — flag it before outputting.</pre>
+      </div>
+    </div>
+
+    <div class="sell-test">
+      <div class="sell-test-label">Sell the Idea Test — emotional gate before Cursor</div>
+      <p class="sell-test-intro">The page should not merely explain the idea. It should make the idea feel inevitable.</p>
+      <ul>
+        <li>Can the core idea be felt before reading any copy?</li>
+        <li>Does the first screen create desire, tension, curiosity, or a sense of status?</li>
+        <li>Is the visual metaphor specific enough to be remembered after the screen is closed?</li>
+        <li>Could this first screen belong to a direct competitor — or is it unmistakably this concept?</li>
+        <li>Does the visual direction make the product feel more valuable than it would without a designed page?</li>
+      </ul>
+      <div class="sell-test-fail"><strong>If any answer fails:</strong> return to Stage 05. Focus on the underspecified field — Core Idea, Visual Metaphor, Visual Principles, Typography System, Color System, or Core Tension to Protect. Do not proceed to Cursor with a failing concept proof. The Traceability Check may reveal which field is the source of the problem.</div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-label">System checkpoint — CSS and variable discipline</div>
+      <ul>
+        <li>Style Reference renders all CSS variables correctly — no fallbacks, no overrides visible</li>
+        <li>Typography scale communicates the weight contrast defined in the CDD character — not just different sizes</li>
+        <li>Accent colour appears restrained — if it appears on more than 10% of the page, the system is broken</li>
+        <li>Hero section passes the 3-second test: Core Tension is felt before reading</li>
+        <li>Color state in Hero matches --color-exposition from the CDD — not a generic dark or light background</li>
+        <li>Narrative layer colours (exposition / rising / climax / resolution) feel meaningfully different — not the same palette at different brightness</li>
+        <li>If any check fails: return to Stage 05, identify the underspecified CDD field, correct it — do not proceed to Cursor</li>
+      </ul>
+    </div>
+
+    <div class="to-next">
+      <div class="to-next-label">How this becomes input for Stage 06</div>
+      <p>The concept proof does not replace or modify the CDD. It validates it. Cursor receives the CDD unchanged — Stage 05.5 simply confirms that what the CDD specifies is what it should be.</p>
+      <ul>
+        <li>Validated CSS variable block → Cursor copies it into Stage 06 skeleton without modification</li>
+        <li>Hero section proof → reference for the Exposition section in Stage 07 — "build this, section by section, to this standard"</li>
+        <li>Any failed checkpoint → corrected in the CDD before Cursor opens, not after</li>
+        <li>Style Reference → optional background reference for Cursor — not an authority, the CDD remains the authority</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div><!-- end 05.5 phases -->
+
+<!-- ── HANDOFF ── -->
+<div class="handoff-block">
+  <div class="handoff-icon">→</div>
+  <div>
+    <h2 class="handoff-headline">The handoff.<br><em>The concept is now locked.</em></h2>
+    <p class="handoff-body">Everything before this line was open exploration — you were discovering. Everything after is closed execution — you are building. The Creative Direction Document enters Cursor as the authority. If the concept is weak at this point, no execution quality will save the result. Do not cross this line until the CDD is complete, Stage 05.5 has validated the visual system, and the Core Tension to Protect has passed the 3-second test.</p>
+    <div class="handoff-rule">Claude → Cursor · Paste CDD in full · Concept proof validated · No revisions to direction</div>
+  </div>
+</div>
+
+<!-- ── PULL QUOTE ── -->
+<div class="pull-quote">
+  <blockquote>The score is written in Claude. The performance is in Cursor. The skills ensure <em>the orchestra knows the musical language</em> — so what gets built reflects what was designed to be built, not what the tool defaults to.</blockquote>
+  <cite>Core principle · Concept to Code Workflow</cite>
+</div>
+
+<!-- ═══════════════════════════════════ PHASE B ═══════════════════════════════════ -->
+<div class="zone-header">
+  <p class="zone-label cursor">Phase B · Cursor</p>
+  <h2 class="zone-title">Execution —<br><em>building the concept</em></h2>
+  <p class="zone-desc">The Creative Direction Document is now your authority. The .mdc skills in Cursor run as background context — they enforce narrative structure, typographic discipline, and anti-genericity automatically when you open HTML files. You do not invoke them — they are always active.</p>
+</div>
+
+<div class="phases">
+
+<!-- ── STAGE 06 ── -->
+<div class="phase" onclick="this.classList.toggle('open')">
+  <div class="phase-num-col">
+    <span class="phase-num cursor">06</span>
+    <span class="phase-badge badge-cursor">Cursor</span>
+    <span class="phase-time">30 min</span>
+  </div>
+  <div class="phase-main">
+    <div class="phase-title">Page Architecture</div>
+    <div class="phase-hook">Build the narrative structure before writing a single word of copy or a single line of visible CSS</div>
+  </div>
+  <div class="phase-toggle"><svg viewBox="0 0 14 14" fill="none" stroke-width="1.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></div>
+  <div class="phase-detail">
+    <div class="phase-io">
+      <div class="io-block"><div class="io-label">Input</div><div class="io-text">creative-direction-document.md — open as file in Cursor AND paste into chat as first message</div></div>
+      <div class="io-block"><div class="io-label">Skills active</div><div class="io-text">story-architecture.mdc — encodes Freytag pacing logic for execution: visual weight, density, and color state vary by narrative act. Always active when building HTML.</div></div>
+    </div>
+
+    <ul class="step-list">
+      <li>Open <strong>creative-direction-document.md</strong> in your Cursor project. Then paste its full contents as the first message in the chat. Wait for Cursor to confirm it has read it before sending the prompt below — this loads the CDD both as a file reference and as active context.</li>
+      <li>All font families, color variables, and typographic scale come directly from the CDD Typography System and Color System sections. Do not improvise these — copy the exact variable names and font choices from the document.</li>
+      <li>If Cursor outputs sections named "hero", "features", "testimonials", "CTA" — it has ignored the CDD. Stop. Restart with an explicit instruction: name the specific scene from your Scene Breakdown that was ignored.</li>
+      <li>The skeleton is not the design — it is the architecture. No visual content yet. This step builds the container the design will live in.</li>
+      <li>Note: <strong>typography-selector</strong> and <strong>color-fundamentals</strong> were used in Claude to define the visual system. Their Cursor equivalents (.mdc rules) should mirror those decisions — if you have custom .mdc files for these, activate them now.</li>
+    </ul>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Cursor Handoff</div>
+      <div class="prompt-box" id="p06">
+        <button class="copy-btn" onclick="copyPrompt('p06',this)">Copy</button>
+        <pre>Build the page architecture for a landing page based on the Creative Direction Document above.
+
+Project: <span class="fill">[project name]</span>
+Core idea: <span class="fill">[one sentence from CDD — copy verbatim]</span>
+Narrative framework: <span class="fill">[Hook/Payoff / Freytag / StoryKernel / SB7]</span>
+Core Tension to Protect: <span class="fill">[copy verbatim from CDD]</span>
+
+Build:
+1. HTML skeleton — sections in the exact narrative order from the Scene Breakdown
+   Section IDs must match the narrative stage names from the CDD — not "hero", "features", "cta"
+2. CSS custom properties — copy exactly from the CDD Color System:
+   --color-exposition, --color-rising, --color-climax, --color-resolution
+   Plus semantic layer: --color-primary, --color-secondary, --color-accent
+3. CSS font variables — copy exactly from the CDD Typography System:
+   --font-headline: <span class="fill">[family from CDD]</span>
+   --font-body: <span class="fill">[family from CDD]</span>
+   --font-accent: <span class="fill">[family from CDD if applicable]</span>
+4. Typography scale as CSS variables — display / headline / subhead / body / caption
+   Each with a comment stating its narrative role and emotional relationship
+5. Scroll architecture — placeholder comments in each section:
+   what animates, at what scroll depth, and what that movement communicates narratively
+
+Do not add any visible design content yet.
+Do not invent constraints — all constraints come from the Exclusion Zone in the CDD.
+Do not default to any standard landing page structure.
+
+Every section must have a named narrative function.
+If you cannot name a section's function from the CDD — do not include it.</pre>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-label">Checkpoint — what you must have before moving to Stage 07</div>
+      <ul>
+        <li>HTML skeleton with section IDs matching Scene Breakdown names exactly — verify against CDD</li>
+        <li>CSS color variables copied from CDD Color System — semantic layer + narrative layer both present</li>
+        <li>CSS font variables set from CDD Typography System — not chosen by Cursor independently</li>
+        <li>Typography scale variables with narrative roles in comments</li>
+        <li>Scroll architecture comments in every section — each names what moves and why</li>
+        <li>Section order matches the Narrative Spine exactly — no generic sections added</li>
+      </ul>
+    </div>
+
+    <div class="to-next">
+      <div class="to-next-label">How this becomes input for Stage 07</div>
+      <ul>
+        <li>Section IDs + narrative stages → tell you exactly which section to build next and what emotional state it must carry</li>
+        <li>CSS color variables → reference by name in every section prompt — never use a hex value directly</li>
+        <li>CSS font variables → reference by name — never specify a font family inline</li>
+        <li>Scroll comments → define the motion trigger you specify in each section-build prompt</li>
+        <li>CDD remains open and active throughout Stage 07 — it is the authority on every decision</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── STAGE 07 ── -->
+<div class="phase" onclick="this.classList.toggle('open')">
+  <div class="phase-num-col">
+    <span class="phase-num cursor">07</span>
+    <span class="phase-badge badge-cursor">Cursor</span>
+    <span class="phase-time">60–90 min</span>
+  </div>
+  <div class="phase-main">
+    <div class="phase-title">Visual Execution — Section by Section</div>
+    <div class="phase-hook">One section. Review. Approve or fix. Then the next. Never batch-build.</div>
+  </div>
+  <div class="phase-toggle"><svg viewBox="0 0 14 14" fill="none" stroke-width="1.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></div>
+  <div class="phase-detail">
+    <div class="phase-io">
+      <div class="io-block"><div class="io-label">Input</div><div class="io-text">Approved skeleton from Stage 06 · creative-direction-document.md — remains open and active throughout</div></div>
+      <div class="io-block"><div class="io-label">Skills active</div><div class="io-text">story-architecture.mdc · critic.mdc (on standby — invoke when output is generic)</div></div>
+    </div>
+
+    <ul class="step-list">
+      <li>Use the Section Build prompt once per section — fill every field from the CDD. After each section: open in the browser, check against the CDD Scene Breakdown, then proceed. Never approve from code alone.</li>
+      <li>For sections requiring a key visual: generate image prompts using the tool you control best. The visual anchor is the Visual Metaphor from your CDD — not necessarily a Cinematic Image (that is specific to the Ghosty Collider path). For other frameworks, derive the visual brief from the Conceptual Foundation section of your CDD.</li>
+      <li>If Cursor produces something generic, do not fix it inline. Invoke <strong>critic.mdc</strong> first — identify the specific failure — then rewrite the prompt with more explicit constraints from the CDD.</li>
+      <li>Reference CSS variables by name throughout — never hardcode a hex value or font family. The variable system from Stage 06 is the single source of truth for visual decisions.</li>
+    </ul>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Section Build (use once per section)</div>
+      <div class="prompt-box" id="p07a">
+        <button class="copy-btn" onclick="copyPrompt('p07a',this)">Copy</button>
+        <pre>Build the <span class="fill">[section name from Scene Breakdown]</span> section.
+
+From CDD:
+Narrative stage: <span class="fill">[exposition / rising action / climax / falling action / resolution]</span>
+Narrative function: <span class="fill">[copy the section's narrative function from CDD Scene Breakdown]</span>
+Emotional target: <span class="fill">[one word — from CDD Scene Breakdown]</span>
+Core Tension to Protect: <span class="fill">[copy verbatim from CDD]</span>
+
+Content:
+Headline: <span class="fill">[from CDD or write one now — no marketing language]</span>
+Body: <span class="fill">[from CDD or leave as placeholder]</span>
+
+Visual system (reference variables — do not hardcode values):
+— Color state: var(<span class="fill">--color-[narrative stage]</span>)
+— Headline font: var(--font-headline), scale: var(--scale-display or --scale-headline)
+— Body font: var(--font-body), scale: var(--scale-body)
+— Negative space: <span class="fill">[role in this section — e.g. "dominant — creates suspension before message"]</span>
+— Motion trigger: <span class="fill">[from skeleton comment — what animates, at what scroll depth, what it communicates]</span>
+
+Image placeholder (if visual section):
+— Dimensions: <span class="fill">[aspect ratio from CDD or section logic]</span>
+— Alt description: <span class="fill">[the visual metaphor — not the product]</span>
+
+Constraints from CDD Exclusion Zone:
+<span class="fill">[paste relevant constraints — 2–3 most critical for this section]</span>
+
+Anti-generic check before outputting:
+— Could this section appear on a competitor's site? If yes — flag it before proceeding.
+— Does the typographic treatment carry a point of view? If not — flag it.
+— Does this section's visual weight match its narrative stage? (climax should feel architecturally distinct)</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Image Generation — Visual Brief (run before any image tool)</div>
+      <div class="prompt-box" id="p07b">
+        <button class="copy-btn" onclick="copyPrompt('p07b',this)">Copy</button>
+        <pre>Produce a structured visual brief for the key image of this section.
+
+Visual Metaphor (from CDD): <span class="fill">[paste — what the camera sees]</span>
+Emotional target: <span class="fill">[one word from CDD]</span>
+Color state: <span class="fill">[from narrative stage — warm/cool/high-contrast/desaturated]</span>
+Atmosphere profile: <span class="fill">[from visual-tension: tension / precision / discovery / warmth / disruption]</span>
+
+Rules (apply to all tools):
+— Describe the metaphor, not the product. The product must not appear.
+— No studio lighting. No corporate photography. No posed subjects.
+— Never use in any prompt: "futuristic", "modern", "innovative", "sleek", "cutting-edge"
+— Compositional approach must match the cinematic tension technique from Stage 04
+  (Dutch Angle / Shallow DoF / Low Angle / Leading Lines / Stillness)
+
+Visual brief output:
+SUBJECT: [what is in the frame — specific, physical, no adjectives as primary descriptors]
+LIGHTING: [quality, direction, source]
+MATERIAL QUALITY: [texture, surface, physical properties]
+COMPOSITION: [how elements are arranged — specific technique]
+ATMOSPHERE: [the feeling of the space — not the subject]
+COLOR TEMPERATURE: [warm / cool / neutral — and why this matches the narrative stage]
+WHAT IS NOT IN THIS IMAGE: [explicit exclusions to prevent generic drift]
+ASPECT RATIO: <span class="fill">[16:9 / 4:3 / 1:1 / 3:4 — match section layout]</span></pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — ChatGPT Image / GPT-4o</div>
+      <div class="prompt-box" id="p07c">
+        <button class="copy-btn" onclick="copyPrompt('p07c',this)">Copy</button>
+        <pre>Generate an image based on this exact description. Do not interpret or embellish.
+
+<span class="fill">[SUBJECT from visual brief]</span>, <span class="fill">[LIGHTING]</span>, <span class="fill">[MATERIAL QUALITY]</span>.
+Composition: <span class="fill">[COMPOSITION technique]</span>.
+Atmosphere: <span class="fill">[ATMOSPHERE]</span>.
+Color temperature: <span class="fill">[COLOR TEMPERATURE]</span>.
+This image does not contain: <span class="fill">[WHAT IS NOT IN THIS IMAGE]</span>.
+No text. No logos. No people unless specified.
+Style: photographic, not illustrated. High detail, not stylized.
+Aspect ratio: <span class="fill">[ratio]</span>.</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Flux / Precision-Control Generators (NanoBanana, Ideogram, Leonardo, etc.)</div>
+      <div class="prompt-box" id="p07d">
+        <button class="copy-btn" onclick="copyPrompt('p07d',this)">Copy</button>
+        <pre>POSITIVE PROMPT:
+<span class="fill">[SUBJECT]</span>, <span class="fill">[LIGHTING]</span>, <span class="fill">[MATERIAL QUALITY]</span>, <span class="fill">[COMPOSITION]</span>,
+<span class="fill">[ATMOSPHERE]</span>, <span class="fill">[COLOR TEMPERATURE]</span>,
+photorealistic, sharp focus, high dynamic range, no text, no logo
+
+NEGATIVE PROMPT:
+<span class="fill">[WHAT IS NOT IN THIS IMAGE]</span>,
+studio lighting, white background, corporate stock photo, posed subjects,
+gradient overlay, lens flare, HDR oversaturation, digital art style,
+futuristic, sci-fi, neon, low quality, blurry, watermark
+
+SETTINGS (adjust per tool):
+— Aspect ratio: <span class="fill">[ratio]</span>
+— CFG / guidance scale: 7–9 (higher = closer to prompt, less creative drift)
+— Steps: 30–40 minimum for detail
+— Seed: fix seed after first good result — use same seed for all section images to maintain visual consistency
+— Style strength: 0 (no style preset — describe everything explicitly)</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Krea.ai — Node Workflow Instructions for Built-in Agent</div>
+      <div class="prompt-box" id="p07e">
+        <button class="copy-btn" onclick="copyPrompt('p07e',this)">Copy</button>
+        <pre>Instructions for Krea.ai built-in AI assistant — node-based generation setup.
+
+Tell the Krea assistant:
+
+"Set up a node workflow for controlled image generation with the following requirements:
+
+1. INPUT NODE: Text prompt input
+   — I will provide the full positive and negative prompt as text
+
+2. GENERATION NODE: Flux or equivalent base model
+   — CFG scale: 7
+   — Steps: 35
+   — Fix seed: yes — use [<span class="fill">your seed number</span>] for all images in this project
+   — Aspect ratio: <span class="fill">[ratio]</span>
+
+3. STYLE LOCK NODE (image-to-image reference):
+   — Reference image: <span class="fill">[attach a reference image or first approved output]</span>
+   — Style strength: 0.3–0.4 (preserve composition, not style)
+   — This ensures visual consistency across all section images
+
+4. COLOR CONTROL NODE (if available):
+   — Target palette: <span class="fill">[describe dominant color temperature from CDD]</span>
+   — Saturation: <span class="fill">[low for tension sections / moderate for resolution]</span>
+
+5. OUTPUT NODE: PNG, maximum resolution
+
+Goal: every image in this project should feel like it was shot in the same world.
+Seed consistency + style reference are the primary control mechanisms."</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Midjourney (optional — for users on this platform)</div>
+      <div class="prompt-box" id="p07f">
+        <button class="copy-btn" onclick="copyPrompt('p07f',this)">Copy</button>
+        <pre"><span class="fill">[SUBJECT from visual brief]</span>, <span class="fill">[LIGHTING]</span>, <span class="fill">[MATERIAL QUALITY]</span>,
+<span class="fill">[COMPOSITION]</span>, <span class="fill">[ATMOSPHERE]</span>, <span class="fill">[COLOR TEMPERATURE]</span>,
+<span class="fill">[camera/lens reference — e.g. "shot on 85mm, shallow depth of field"]</span>
+--no <span class="fill">[WHAT IS NOT IN THIS IMAGE]</span> studio lighting corporate posed subjects text logo
+--ar <span class="fill">[ratio]</span> --style raw --v 6.1 --seed <span class="fill">[fix seed for consistency]</span></pre>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-label">Checkpoint — what you must have before Stage 08</div>
+      <ul>
+        <li>Every section from the CDD Scene Breakdown built and individually reviewed in the browser</li>
+        <li>Each section passes its anti-generic check — could not appear on a competitor's site</li>
+        <li>All CSS references use variables — no hardcoded hex values or font families</li>
+        <li>Key visuals generated for all visual sections — using the same seed / style reference for cross-section consistency</li>
+        <li>Typography carries a distinct point of view in every section — not just "clean" and "readable"</li>
+        <li>Motion triggers implemented per skeleton comments — each serves a named narrative function</li>
+        <li>CDD Core Tension to Protect is visible in the prototype — you can point to it</li>
+      </ul>
+    </div>
+
+    <div class="to-next">
+      <div class="to-next-label">How this becomes input for Stage 08</div>
+      <ul>
+        <li>Full prototype → the subject of the critic review — every section assessed against the CDD</li>
+        <li>Sections that passed anti-generic check → enter Stage 08 as protected — critic will not touch these</li>
+        <li>Sections that were flagged → enter Stage 08 as priority fixes</li>
+        <li>The CDD → the comparison document for Stage 08 — every critic judgment is made against it, not against taste</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── STAGE 08 ── -->
+<div class="phase" onclick="this.classList.toggle('open')">
+  <div class="phase-num-col">
+    <span class="phase-num both">08</span>
+    <span class="phase-badge badge-both">Both</span>
+    <span class="phase-time">30 min</span>
+  </div>
+  <div class="phase-main">
+    <div class="phase-title">Critic Gate — QA Review</div>
+    <div class="phase-hook">Identify specific problems with specific fixes. Do not add. Remove.</div>
+  </div>
+  <div class="phase-toggle"><svg viewBox="0 0 14 14" fill="none" stroke-width="1.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg></div>
+  <div class="phase-detail">
+    <div class="phase-io">
+      <div class="io-block"><div class="io-label">Input</div><div class="io-text">Full HTML prototype · creative-direction-document.md as comparison document — every judgment is made against the CDD, not against taste</div></div>
+      <div class="io-block"><div class="io-label">Skills active</div><div class="io-text">critic.mdc (Cursor — execution QA) · critic.md (Claude — strategic concept review)</div></div>
+    </div>
+
+    <ul class="step-list">
+      <li>Run the Strategic Review in Claude first (prompt below) — this checks whether the conceptual foundation from Stage 02 survived into the prototype. Execution problems caught in Cursor cannot fix a concept that has already eroded.</li>
+      <li>In Cursor: run critic.mdc on index.html — checks every section against narrative rules, typographic discipline, and anti-genericity criteria. Say: "Run full critic checklist on index.html against the CDD."</li>
+      <li>Before listing any fixes, run the Protected List prompt. Lock what is working. The impulse to improve what works is how you destroy it.</li>
+      <li>Fix only what is flagged as Critical priority. Recommended and Optional items are deferred unless time permits.</li>
+      <li>Deploy to Vercel for a live URL. Test on mobile. Decisions are made on real output — not on screenshots or code review.</li>
+    </ul>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Strategic Review (run in Claude, before Cursor QA)</div>
+      <div class="prompt-box" id="p08a">
+        <button class="copy-btn" onclick="copyPrompt('p08a',this)">Copy</button>
+        <pre>Run a strategic critic review of this prototype against its Creative Direction Document.
+
+Project Context Block: <span class="fill">[paste — parameters calibrate the critic threshold for Generic Distance and Commercial Clarity]</span>
+
+CDD summary:
+— Core Idea: <span class="fill">[paste verbatim from CDD]</span>
+— Core Tension to Protect: <span class="fill">[paste verbatim from CDD]</span>
+— Conceptual Foundation: <span class="fill">[paste: Ghost / Emergent Code / Existential Threat / Blended Space — whichever applies]</span>
+— Emotional Promise: <span class="fill">[one word from CDD]</span>
+— What We Are Refusing: <span class="fill">[from Stage 03 amplification]</span>
+
+Prototype: <span class="fill">[paste full HTML or describe each section with its current visual treatment]</span>
+
+Review questions — answer each with a specific yes/no + evidence:
+
+1. CONCEPT SURVIVAL: Is the conceptual foundation from Stage 02 traceable in the finished prototype?
+   Where is it most visible? Where has it been lost?
+
+2. CORE TENSION: Is the Core Tension to Protect visible without explanation?
+   If someone who hasn't read the CDD saw this — would they feel the tension?
+
+3. EMOTIONAL PROMISE: Does the prototype produce the stated Emotional Promise in the first 3 seconds?
+   Test: close your eyes, open for 2 seconds. What emotion registers?
+
+4. WHAT WE ARE REFUSING: Does the prototype accidentally do the thing we refused?
+   Is the safer, more generic version visible anywhere?
+
+5. NARRATIVE ARC: Does the scroll feel like a story — tension, build, climax, release?
+   Or does it feel like a list of sections?
+
+6. VISUAL SYSTEM INTEGRITY: Does the typography system match the CDD character?
+   Does the color system follow the narrative arc defined in the CDD?
+
+Output for each issue found:
+ISSUE: [specifically what]
+WHERE: [which section]
+WHY IT MATTERS: [one sentence]
+FIX: [one specific action — minimum viable change]
+PRIORITY: [critical / recommended / optional]
+
+End with:
+PROTECTED: [what is working and must not change — list at least 3 things]
+
+EXTERNAL BENCHMARK:
+Name three digital projects from adjacent categories — not competitors, not the same industry — recognized in the last two years.
+For each: what is the single most memorable decision in that project?
+Now compare this prototype:
+— What does this prototype have that none of those three have?
+— What specific decision would make a jury member who has seen all three notice this project above them?
+If the answers require hedging — the prototype has not yet reached external benchmark quality.
+
+KNOWN TRAP CHECK (from Creative Director Signature):
+Known Trap declared: <span class="fill">[paste from Signature Block]</span>
+Is this trap present in the prototype? [yes / no / traces]
+Evidence: [where it appears or what confirms it was avoided]</pre>
+      </div>
+    </div>
+
+    <div class="prompt-section">
+      <div class="prompt-section-label">Prompt — Concept Drift Check (run if strategic review finds erosion)</div>
+      <div class="prompt-box" id="p08b">
+        <button class="copy-btn" onclick="copyPrompt('p08b',this)">Copy</button>
+        <pre>The strategic review found concept drift. Identify exactly where it happened.
+
+CDD Core Idea: <span class="fill">[paste]</span>
+CDD Core Tension: <span class="fill">[paste]</span>
+
+For each stage of execution, answer:
+— Stage 06 skeleton: did the section structure preserve the Narrative Spine?
+— Stage 07 first section built: was the conceptual foundation still intact here?
+— At which specific section did the drift begin?
+— What decision caused it? (font choice / color / layout / copy / motion)
+
+Output:
+DRIFT ORIGIN: [specific section + specific decision]
+ROOT CAUSE: [why this decision eroded the concept — not just that it did]
+MINIMUM FIX: [the one change that would restore the Core Tension without rebuilding]
+SECTIONS AFFECTED BY DRIFT: [list — these need re-review after the fix]</pre>
+      </div>
+    </div>
+
+    <div style="margin: 24px 0; padding: 20px 22px; border: 1px solid var(--rule-mid); background: var(--bg-2);">
+      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-2); margin-bottom: 14px;">⬡ Creative-Generic Filter — Pattern Recognition Library</div>
+      <div style="font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 14px;">Applied at Stage 08 only — after the prototype exists. Not during ideation, where it suppresses creativity. The goal is not to prohibit familiar moves. The goal is to ensure every familiar move is justified by the Core Tension, Visual Principles, and the CDD.</div>
+      <div style="font-family: var(--mono); font-size: 11px; color: var(--text-3); margin-bottom: 10px; letter-spacing: 0.08em;">Check whether the output accidentally resembles any of the following:</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px;">
+        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Generic dark editorial Awwwards template</div>
+        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Oversized grotesque headline + tiny mono labels (default pairing)</div>
+        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Abstract 3D object with no conceptual necessity</div>
+        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Premium SaaS template with metric cards and feature grid</div>
+        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Cinematic gradient product launch (default dark-to-color)</div>
+        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Fake museum/exhibition layout (white space as concept substitute)</div>
+        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Luxury minimalism without a specific conceptual idea</div>
+        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Particle/noise texture as atmosphere without semantic function</div>
+      </div>
+      <div style="margin-top: 12px; font-family: var(--sans); font-size: 12px; color: var(--text-3); line-height: 1.7;">If a familiar pattern is present: trace it back to the CDD. If it maps to the Core Tension and Visual Principles — it is justified. If it cannot be traced — it is decoration. Remove it. Do not replace it with a different familiar pattern.</div>
+    </div>
+
+    <div style="margin: 24px 0; padding: 20px 22px; border: 1px solid var(--accent-dim); background: rgba(196,149,74,0.06);">
+      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px;">⬡ Reactive Scenarios — What to do when something is wrong</div>
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">A · Execution is generic<br>Concept is still strong</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Anti-genericity protocol<br>Re-run Section Build prompt with Exclusion Zone constraints made explicit. Ask Cursor: "Could this section appear on [competitor name]'s site? If yes — what is the one change that makes it impossible?"</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">B · Concept has eroded<br>Execution is technically correct</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Concept Drift Check (prompt above)<br>Find the origin section. Fix that decision first. Do not touch sections built after until the root is resolved.</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">C · Typography broke away<br>from the CDD system</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Typography audit<br>In Cursor: "Check every font-family and font-weight declaration in index.html. List any that are not using a CSS variable from the skeleton. Replace with the correct variable."</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0;">
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">D · Visual system is inconsistent<br>Sections don't feel like one project</div>
+          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ System consistency sweep<br>In Cursor: "Audit every hardcoded color value and every direct font-family reference. Replace all with CSS variables. Then check that --color-[narrative-stage] shifts correctly at each section boundary."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <div class="checkpoint-label">Final checkpoint — this is the output</div>
+      <ul>
+        <li>Hook works in under 3 seconds without reading text — tested by closing eyes, opening for 2 seconds</li>
+        <li>One dominant visual element on the first screen — not three competing for attention</li>
+        <li>Narrative arc is felt through the scroll — tension builds, releases at climax, resolves</li>
+        <li>Payoff feels earned, not appended</li>
+        <li>The conceptual foundation from Stage 02 is traceable from the CDD all the way to the live prototype — you can point to it in the page</li>
+        <li>Typography system is intact — no hardcoded font families or weights outside the variable system</li>
+        <li>Color system follows the narrative arc — color shift is felt at section transitions</li>
+        <li>Protected list was created before any fixes — nothing on it was touched</li>
+        <li>Live URL on Vercel — tested on mobile, not only in desktop browser</li>
+      </ul>
+    </div>
+
+    <div class="notes">
+      <div class="note-item">
+        <span class="note-key">Critic rule</span>
+        <span class="note-val">The critic identifies one problem and proposes one specific fix. It does not rewrite from scratch. It does not suggest adding new elements. Improvement almost always means removing something — not replacing it with something else or compensating with additions.</span>
+      </div>
+      <div class="note-item">
+        <span class="note-key">Protected list</span>
+        <span class="note-val">Before any fixes, list what is working and must not change. Name at least three specific things. This protects the concept's strongest elements from being eroded by the refinement process. The more specific the protected list, the safer the review.</span>
+      </div>
+      <div class="note-item">
+        <span class="note-key">Judgment source</span>
+        <span class="note-val">Every critic judgment is made against the CDD — not against taste, trend, or the reviewer's preference. If the fix cannot be traced back to a specific CDD field, it is an opinion, not a correction.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end phases -->
+
+<!-- ── CLOSING RULES ── -->
+<div class="closing">
+  <h2 class="closing-headline">Four rules<br>that protect<br>the <em>concept</em>.</h2>
+  <div class="rules-grid">
+    <div class="rule-block">
+      <div class="rule-num">01 ·</div>
+      <h3 class="rule-title">Ideation is open. Execution is closed.</h3>
+      <p class="rule-body">Before the handoff: explore, diverge, challenge every direction. After the handoff: execute without questioning the concept. The tool that builds must not also decide what to build.</p>
+    </div>
+    <div class="rule-block">
+      <div class="rule-num">02 ·</div>
+      <h3 class="rule-title">The conceptual foundation must survive into the final file.</h3>
+      <p class="rule-body">Whatever was built in Stage 02 — Ghost, Emergent Code, Existential Threat, or Blended Space — must be visible in the finished prototype. If you cannot trace it from the CDD to the live page, find exactly where it disappeared and fix only that.</p>
+    </div>
+    <div class="rule-block">
+      <div class="rule-num">03 ·</div>
+      <h3 class="rule-title">Every element earns its place through function.</h3>
+      <p class="rule-body">Representational, Interactional, Compositional. An element that carries none of these is decoration. Decoration is noise. Noise dilutes the concept. Remove it before it dilutes everything else.</p>
+    </div>
+    <div class="rule-block">
+      <div class="rule-num">04 ·</div>
+      <h3 class="rule-title">Improve by removing, not by adding.</h3>
+      <p class="rule-body">The impulse to add is commercial pressure dressed as creativity. When the critic finds a weakness, the answer is almost always to remove something — not to add a new element to compensate.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function copyPrompt(id, btn) {
+  const box = document.getElementById(id);
+  const pre = box.querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
