@@ -685,27 +685,33 @@ body {
   top: 14px;
   right: 14px;
   font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.06em;
   color: var(--text-3);
   background: var(--bg);
   border: 1px solid var(--rule-mid);
   border-radius: 6px;
   padding: 5px 10px;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 
-.copy-btn:hover {
+.copy-btn:hover:not(.copied) {
   color: var(--text);
   border-color: var(--text-3);
   background: var(--bg-card);
 }
 
 .copy-btn.copied {
-  color: var(--claude);
-  border-color: oklch(0.78 0.14 155 / 0.35);
+  color: oklch(0.92 0.12 145);
+  background: oklch(0.52 0.16 145);
+  border-color: oklch(0.68 0.18 145);
+}
+
+.copy-btn.copied:hover {
+  color: oklch(0.92 0.12 145);
+  background: oklch(0.52 0.16 145);
+  border-color: oklch(0.68 0.18 145);
 }
 
 /* ── NOTES ── */
@@ -1492,7 +1498,7 @@ body {
     <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Brief Extraction</div>
       <div class="prompt-box" id="p01a">
-        <button class="copy-btn" onclick="copyPrompt('p01a',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>I'm going to paste a document below — it could be a brief, product description, strategy notes, or a meeting summary. Extract and structure it into a standardised project brief.
 
 Do not add anything not in the source material. If a field is missing — mark it [UNKNOWN] and list it as an open question.
@@ -1538,7 +1544,7 @@ Everything unclear or missing — must be resolved before Stage 02.</pre>
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Category Audit</div>
       <div class="prompt-box" id="p01b">
-        <button class="copy-btn" onclick="copyPrompt('p01b',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Run a fast competitor visual scan for this project. Deep code analysis runs in Stage 02.
 
 Product category: <span class="fill">[e.g. "cognitive health supplements", "B2B cybersecurity"]</span>
@@ -1719,7 +1725,7 @@ Where a parameter conflicts with a default AI output, the parameter takes preced
     <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Framework Selection (run this first)</div>
       <div class="prompt-box" id="p02select">
-        <button class="copy-btn" onclick="copyPrompt('p02select',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Apply Framework Mapper to this brief.
 
 Brief summary: <span class="fill">[paste Core Transformation + Internal Problem + Category Audit from Stage 01]</span>
@@ -1768,7 +1774,7 @@ AVOID FOR THIS PROJECT: [frameworks that would misfire, with reasons]</pre>
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Ghosty Collider (path A)</div>
       <div class="prompt-box" id="p02a">
-        <button class="copy-btn" onclick="copyPrompt('p02a',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Apply Ghost Extraction + Collision Matrix to the following brief.
 
 Brief summary: <span class="fill">[paste Core Transformation + Internal Problem from Stage 01]</span>
@@ -1827,7 +1833,7 @@ STRONGEST: [which and why — one sentence]</pre>
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Semiotic Engineering (path B)</div>
       <div class="prompt-box" id="p02b">
-        <button class="copy-btn" onclick="copyPrompt('p02b',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Apply Semiotic Engineering to this brand/product context.
 
 Category: <span class="fill">[product category]</span>
@@ -1862,7 +1868,7 @@ DOMINANT CODES / RESIDUAL CODES / EMERGENT CODES / GAP / WHITESPACE OPPORTUNITY 
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — StoryKernel (path C)</div>
       <div class="prompt-box" id="p02c">
-        <button class="copy-btn" onclick="copyPrompt('p02c',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Apply StoryKernel framework to this brief.
 
 Brief summary: <span class="fill">[paste Core Transformation + Internal Problem from Stage 01]</span>
@@ -1917,7 +1923,7 @@ DIMENSIONAL TIME: [activated / not activated — reason]</pre>
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Layered Metaphor / Conceptual Blending (path D)</div>
       <div class="prompt-box" id="p02d">
-        <button class="copy-btn" onclick="copyPrompt('p02d',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Apply Layered Metaphor / Conceptual Blending to this brief.
 
 Brief summary: <span class="fill">[paste Core Transformation + Internal Problem from Stage 01]</span>
@@ -2027,7 +2033,7 @@ CORE TENSION TO PROTECT: [named — one specific, irreducible thing]</pre>
     <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Concept Generation (Ghosty Collider path)</div>
       <div class="prompt-box" id="p03a">
-        <button class="copy-btn" onclick="copyPrompt('p03a',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Generate 3–5 visual concepts from this Ghosty Collider output.
 
 Ghost: <span class="fill">[paste Ghost — abstract force, zero industry language]</span>
@@ -2046,7 +2052,7 @@ CONCEPT [N]: [title] · LOGLINE: [one sentence] · CORE TENSION: [contradiction]
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Concept Generation (Semiotic Engineering path)</div>
       <div class="prompt-box" id="p03b">
-        <button class="copy-btn" onclick="copyPrompt('p03b',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Generate 3–5 visual concepts from this Semiotic Engineering analysis.
 
 Dominant codes (refuse): <span class="fill">[from Stage 02]</span>
@@ -2064,7 +2070,7 @@ CONCEPT [N]: [title] · CODE TERRITORY: [which emergent code] · LOGLINE: [one s
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Concept Generation (StoryKernel path)</div>
       <div class="prompt-box" id="p03c">
-        <button class="copy-btn" onclick="copyPrompt('p03c',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Generate 3–5 visual concepts from this StoryKernel analysis.
 
 Existential Threat: <span class="fill">[market shift making old methods impossible]</span>
@@ -2084,7 +2090,7 @@ CONCEPT [N]: [title] · EXISTENTIAL THREAT: [external verifiable shift] · MENTO
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Concept Generation (Layered Metaphor path)</div>
       <div class="prompt-box" id="p03d">
-        <button class="copy-btn" onclick="copyPrompt('p03d',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Generate 3–5 visual concepts using Layered Metaphor / Conceptual Blending.
 
 Product transformation: <span class="fill">[Core Transformation from Stage 01]</span>
@@ -2102,7 +2108,7 @@ CONCEPT [N]: [title] · BLENDED SPACE: [two domains + new object at intersection
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Selection + Amplification (all paths)</div>
       <div class="prompt-box" id="p03e">
-        <button class="copy-btn" onclick="copyPrompt('p03e',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Review these [N] concepts. Apply NFRT — Novelty / Feasibility / Resonance / Timeliness.
 Select the concept where Resonance and Timeliness are both strongest.
 Amplify it 30–40%. Remove all hedges. Full commitment — no safety net.
@@ -2125,7 +2131,7 @@ Test 2: Could someone guess the product category? [yes → rewrite / no → proc
 <div class="prompt-section">
       <div class="prompt-section-label">Visual Metaphor Contamination Check — run before Selection</div>
       <div class="prompt-box" id="p03_contam">
-        <button class="copy-btn" onclick="copyPrompt('p03_contam',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Check the Visual Metaphors in these concepts against overrepresented Claude-aesthetic clusters.
 
 Concepts and their Visual Metaphors: <span class="fill">[paste all concepts with their Visual Metaphor field]</span>
@@ -2151,7 +2157,7 @@ If no clusters detected for a concept: mark as CLEAR and proceed.</pre>
 <div class="prompt-section">
       <div class="prompt-section-label">Concept Kill Test — run after Selection + Amplification</div>
       <div class="prompt-box" id="p03_kill">
-        <button class="copy-btn" onclick="copyPrompt('p03_kill',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Run the Concept Kill Test on the selected concept.
 
 Selected concept: <span class="fill">[paste title + amplified logline + amplified Visual Metaphor]</span>
@@ -2230,7 +2236,7 @@ If RESPONSE holds → proceed to Stage 04 with WHAT THE ANTI-CASE REVEALS as a n
     <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Stage 04a · Reference Harvest (attach images directly to this message)</div>
       <div class="prompt-box" id="p04a">
-        <button class="copy-btn" onclick="copyPrompt('p04a',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Analyze these references for this concept. Attach images directly to this message — or provide URLs, names, or descriptions. Maximum 3–5 references. All must come from outside the product category.
 
 Core Tension: <span class="fill">[from Stage 03]</span>
@@ -2255,7 +2261,7 @@ WHY THIS OBSESSION IS RELEVANT: [the non-obvious connection to Core Tension — 
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Stage 04b · Visual Language Synthesis</div>
       <div class="prompt-box" id="p04b_synth">
-        <button class="copy-btn" onclick="copyPrompt('p04b_synth',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Synthesize the reference analysis into a Visual Language — 5 directives that define how this concept looks and behaves.
 
 Core Tension: <span class="fill">[from Stage 03]</span>
@@ -2295,7 +2301,7 @@ MINIMUM VIABLE EXPRESSION: [reduced scope version that preserves the central ten
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Typography Direction (informed by Stage 04b Visual Principles)</div>
       <div class="prompt-box" id="p04c_typo">
-        <button class="copy-btn" onclick="copyPrompt('p04c_typo',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Define the typographic character and propose 2–3 font directions.
 
 Core Tension: <span class="fill">[from Stage 03]</span>  ·  Emotional Promise: <span class="fill">[one word]</span>
@@ -2312,7 +2318,7 @@ DIRECTION [N] · HEADLINE FAMILY [font + weights] · BODY FAMILY [font + weight]
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Color System (informed by Stage 04b Visual Principles)</div>
       <div class="prompt-box" id="p04d_color">
-        <button class="copy-btn" onclick="copyPrompt('p04d_color',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Generate 3 color palette directions for this concept.
 
 Emotional Promise: <span class="fill">[one word]</span>  ·  Core Tension: <span class="fill">[from Stage 03]</span>
@@ -2386,7 +2392,7 @@ WHAT THIS PALETTE REFUSES · RISK</pre>
     <div class="prompt-section">
       <div class="prompt-section-label">Prompt — CDD Synthesis</div>
       <div class="prompt-box" id="p05a">
-        <button class="copy-btn" onclick="copyPrompt('p05a',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Synthesise a Creative Direction Document from all prior stage outputs.
 This document will be passed in full to Cursor as its sole execution context.
 
@@ -2478,7 +2484,7 @@ QUALITY CRITERIA — specific and testable
     <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Adversarial CDD Pass (run after generating the CDD)</div>
       <div class="prompt-box" id="p05_adv">
-        <button class="copy-btn" onclick="copyPrompt('p05_adv',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>The CDD has been generated. Now argue against it.
 
 CDD Core Idea: <span class="fill">[paste]</span>
@@ -2595,7 +2601,7 @@ DIRECTION: [what would make it specific to this concept only]</pre>
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Deliverable A: Style Reference</div>
       <div class="prompt-box" id="p055a">
-        <button class="copy-btn" onclick="copyPrompt('p055a',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Build a Style Reference HTML page from this CDD visual system.
 This is not a design exercise — execute the variables exactly as defined. No aesthetic interpretation.
 
@@ -2645,7 +2651,7 @@ Rules:
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Deliverable B: Concept Section(s)</div>
       <div class="prompt-box" id="p055b">
-        <button class="copy-btn" onclick="copyPrompt('p055b',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Build <span class="fill">[Hero only / Hero + USP / Hero + PLP / Hero + PDP / Hero + Blog Post]</span> as a rendered HTML concept proof.
 
 CSS VARIABLE SYSTEM (paste verbatim — same block as Deliverable A):
@@ -2772,7 +2778,7 @@ If any answer is no — flag it before outputting.</pre>
     <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Cursor Handoff</div>
       <div class="prompt-box" id="p06">
-        <button class="copy-btn" onclick="copyPrompt('p06',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Build the page architecture for a landing page based on the Creative Direction Document above.
 
 Project: <span class="fill">[project name]</span>
@@ -2856,7 +2862,7 @@ If you cannot name a section's function from the CDD — do not include it.</pre
     <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Section Build (use once per section)</div>
       <div class="prompt-box" id="p07a">
-        <button class="copy-btn" onclick="copyPrompt('p07a',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Build the <span class="fill">[section name from Scene Breakdown]</span> section.
 
 From CDD:
@@ -2892,7 +2898,7 @@ Anti-generic check before outputting:
 <div class="prompt-section">
       <div class="prompt-section-label">Image Generation — Visual Brief (run before any image tool)</div>
       <div class="prompt-box" id="p07b">
-        <button class="copy-btn" onclick="copyPrompt('p07b',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Produce a structured visual brief for the key image of this section.
 
 Visual Metaphor (from CDD): <span class="fill">[paste — what the camera sees]</span>
@@ -2921,7 +2927,7 @@ ASPECT RATIO: <span class="fill">[16:9 / 4:3 / 1:1 / 3:4 — match section layou
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — ChatGPT Image / GPT-4o</div>
       <div class="prompt-box" id="p07c">
-        <button class="copy-btn" onclick="copyPrompt('p07c',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Generate an image based on this exact description. Do not interpret or embellish.
 
 <span class="fill">[SUBJECT from visual brief]</span>, <span class="fill">[LIGHTING]</span>, <span class="fill">[MATERIAL QUALITY]</span>.
@@ -2937,7 +2943,7 @@ Aspect ratio: <span class="fill">[ratio]</span>.</pre>
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Flux / Precision-Control Generators (NanoBanana, Ideogram, Leonardo, etc.)</div>
       <div class="prompt-box" id="p07d">
-        <button class="copy-btn" onclick="copyPrompt('p07d',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>POSITIVE PROMPT:
 <span class="fill">[SUBJECT]</span>, <span class="fill">[LIGHTING]</span>, <span class="fill">[MATERIAL QUALITY]</span>, <span class="fill">[COMPOSITION]</span>,
 <span class="fill">[ATMOSPHERE]</span>, <span class="fill">[COLOR TEMPERATURE]</span>,
@@ -2960,7 +2966,7 @@ SETTINGS (adjust per tool):
 <div class="prompt-section">
       <div class="prompt-section-label">Krea.ai — Node Workflow Instructions for Built-in Agent</div>
       <div class="prompt-box" id="p07e">
-        <button class="copy-btn" onclick="copyPrompt('p07e',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Instructions for Krea.ai built-in AI assistant — node-based generation setup.
 
 Tell the Krea assistant:
@@ -2994,7 +3000,7 @@ Seed consistency + style reference are the primary control mechanisms."</pre>
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Midjourney (optional — for users on this platform)</div>
       <div class="prompt-box" id="p07f">
-        <button class="copy-btn" onclick="copyPrompt('p07f',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre"><span class="fill">[SUBJECT from visual brief]</span>, <span class="fill">[LIGHTING]</span>, <span class="fill">[MATERIAL QUALITY]</span>,
 <span class="fill">[COMPOSITION]</span>, <span class="fill">[ATMOSPHERE]</span>, <span class="fill">[COLOR TEMPERATURE]</span>,
 <span class="fill">[camera/lens reference — e.g. "shot on 85mm, shallow depth of field"]</span>
@@ -3056,7 +3062,7 @@ Seed consistency + style reference are the primary control mechanisms."</pre>
     <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Strategic Review (run in Claude, before Cursor QA)</div>
       <div class="prompt-box" id="p08a">
-        <button class="copy-btn" onclick="copyPrompt('p08a',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>Run a strategic critic review of this prototype against its Creative Direction Document.
 
 Project Context Block: <span class="fill">[paste — parameters calibrate the critic threshold for Generic Distance and Commercial Clarity]</span>
@@ -3117,7 +3123,7 @@ Evidence: [where it appears or what confirms it was avoided]</pre>
 <div class="prompt-section">
       <div class="prompt-section-label">Prompt — Concept Drift Check (run if strategic review finds erosion)</div>
       <div class="prompt-box" id="p08b">
-        <button class="copy-btn" onclick="copyPrompt('p08b',this)">Copy</button>
+        <button type="button" class="copy-btn">copy</button>
         <pre>The strategic review found concept drift. Identify exactly where it happened.
 
 CDD Core Idea: <span class="fill">[paste]</span>
@@ -3240,15 +3246,61 @@ SECTIONS AFFECTED BY DRIFT: [list — these need re-review after the fix]</pre>
 </div>
 
 <script>
-function copyPrompt(id, btn) {
-  const box = document.getElementById(id);
-  const pre = box.querySelector('pre');
-  navigator.clipboard.writeText(pre.innerText).then(() => {
-    btn.textContent = 'Copied';
+(function () {
+  const RESET_MS = 2000;
+
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (!ok) throw new Error('Copy failed');
+  }
+
+  function showCopied(btn) {
+    if (!btn.dataset.label) btn.dataset.label = 'copy';
+    btn.textContent = 'copied';
     btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    clearTimeout(btn._copyReset);
+    btn._copyReset = setTimeout(() => {
+      btn.textContent = btn.dataset.label;
+      btn.classList.remove('copied');
+    }, RESET_MS);
+  }
+
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.copy-btn');
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const pre = btn.closest('.prompt-box')?.querySelector('pre');
+    if (!pre) return;
+
+    const text = pre.textContent.trim();
+    try {
+      await copyText(text);
+      showCopied(btn);
+    } catch {
+      btn.textContent = 'Failed';
+      btn.classList.remove('copied');
+      clearTimeout(btn._copyReset);
+      btn._copyReset = setTimeout(() => {
+        btn.textContent = btn.dataset.label || 'copy';
+      }, RESET_MS);
+    }
   });
-}
+})();
 </script>
 
 </body>
