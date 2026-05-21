@@ -6,206 +6,1395 @@
 <title>Concept to Code — Complete Field Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Syne:wght@400;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 :root {
-  --bg: #0b0a09; --bg-2: #111009; --bg-card: #141310;
-  --text: #e6e1d6; --text-2: #7a7268; --text-3: #4a4540;
-  --accent: #c4954a; --accent-dim: #6b4f27;
-  --claude: #4ade80; --cursor: #a78bfa;
-  --rule: #1e1c19; --rule-mid: #2a2724;
-  --serif: 'Cormorant Garamond', Georgia, serif;
-  --sans: 'Syne', sans-serif;
-  --mono: 'DM Mono', monospace;
+  --bg: oklch(0.145 0.006 75);
+  --bg-2: oklch(0.175 0.007 75);
+  --bg-card: oklch(0.195 0.008 75);
+  --bg-elevated: oklch(0.21 0.008 75);
+  --text: oklch(0.94 0.008 85);
+  --text-2: oklch(0.68 0.012 80);
+  --text-3: oklch(0.48 0.01 75);
+  --accent: oklch(0.78 0.06 75);
+  --accent-dim: oklch(0.55 0.04 75);
+  --claude: oklch(0.78 0.14 155);
+  --cursor: oklch(0.74 0.12 285);
+  --rule: oklch(0.26 0.008 75);
+  --rule-mid: oklch(0.32 0.009 75);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --serif: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --nav-w: 220px;
+  --content-max: 720px;
+  --page-pad: clamp(20px, 4vw, 48px);
 }
-html { background: var(--bg); color: var(--text); font-family: var(--serif); font-size: 17px; }
-body { max-width: 960px; margin: 0 auto; padding: 0 52px 120px; }
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.page {
+  display: grid;
+  grid-template-columns: var(--nav-w) minmax(0, 1fr);
+  max-width: calc(var(--nav-w) + var(--content-max) + var(--page-pad) * 2 + 80px);
+  margin: 0 auto;
+  padding: 0 var(--page-pad) 140px;
+}
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  padding: 32px 0 32px;
+  border-right: 1px solid var(--rule);
+  margin-right: clamp(32px, 5vw, 64px);
+}
+
+.site-nav__brand {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  line-height: 1.5;
+  margin-bottom: 36px;
+  padding-right: 16px;
+}
+
+.site-nav__brand strong {
+  display: block;
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  margin-top: 4px;
+}
+
+.site-nav__group {
+  margin-bottom: 28px;
+}
+
+.site-nav__label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+.site-nav a {
+  display: block;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-2);
+  text-decoration: none;
+  padding: 5px 0;
+  line-height: 1.4;
+  transition: color 0.15s;
+}
+
+.site-nav a:hover { color: var(--text); }
+
+.site-nav a.is-claude:hover { color: var(--claude); }
+.site-nav a.is-cursor:hover { color: var(--cursor); }
+
+.main {
+  max-width: var(--content-max);
+  min-width: 0;
+}
 
 /* ── MASTHEAD ── */
-.masthead { padding: 96px 0 80px; border-bottom: 1px solid var(--rule); }
-.masthead-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 40px; }
-.masthead h1 { font-size: clamp(56px, 9vw, 96px); font-weight: 300; line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 40px; }
-.masthead h1 em { font-style: italic; color: var(--text-2); }
-.masthead-sub { font-family: var(--sans); font-size: 15px; color: var(--text-2); line-height: 1.75; max-width: 580px; margin-bottom: 48px; }
-.masthead-meta { display: flex; gap: 48px; flex-wrap: wrap; }
-.meta-item { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--text-3); text-transform: uppercase; }
-.meta-item span { display: block; color: var(--text-2); margin-top: 5px; font-style: italic; letter-spacing: 0; text-transform: none; font-size: 13px; }
+.masthead {
+  padding: clamp(64px, 10vw, 112px) 0 clamp(56px, 8vw, 88px);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 0;
+}
+
+.masthead-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--text-3);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.masthead h1 {
+  font-size: clamp(40px, 6.5vw, 64px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 28px;
+}
+
+.masthead h1 em {
+  font-style: italic;
+  color: var(--text-2);
+}
+
+.masthead-sub {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-2);
+  line-height: 1.7;
+  max-width: 52ch;
+  margin-bottom: 40px;
+}
+
+.masthead-meta {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+}
+
+.meta-item {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+  text-transform: uppercase;
+}
+
+.meta-item span {
+  display: block;
+  color: var(--text-2);
+  margin-top: 6px;
+  font-family: var(--serif);
+  font-style: italic;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 14px;
+}
 
 /* ── LEGEND ── */
-.legend { display: flex; gap: 36px; padding: 28px 0; border-bottom: 1px solid var(--rule); flex-wrap: wrap; }
-.legend-item { display: flex; align-items: center; gap: 10px; }
-.legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.legend {
+  display: flex;
+  gap: 28px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--rule);
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 .dot-claude { background: var(--claude); }
 .dot-cursor { background: var(--cursor); }
 .dot-both { background: var(--accent); }
-.legend-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--text-2); text-transform: uppercase; }
+
+.legend-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--text-2);
+  text-transform: uppercase;
+}
+
+/* ── PREFACE / WORKFLOW ── */
+.preface { margin-bottom: 48px; }
+
+.preface-header {
+  padding: 32px 0 20px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 20px;
+}
+
+.preface-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+.preface-text {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.7;
+  max-width: 58ch;
+}
+
+.preface-text strong {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.hi-cursor { color: var(--cursor); font-weight: 500; }
 
 /* ── ZONE HEADERS ── */
-.zone-header { padding: 48px 0 28px; }
-.zone-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; }
+.zone-header {
+  padding: 64px 0 32px;
+  scroll-margin-top: 24px;
+}
+
+.zone-header--spaced { padding-top: 72px; }
+
+.zone-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
 .zone-label.claude { color: var(--claude); }
 .zone-label.cursor { color: var(--cursor); }
-.zone-title { font-size: clamp(30px, 4.5vw, 48px); font-weight: 300; line-height: 1.1; letter-spacing: -0.01em; }
-.zone-title em { font-style: italic; color: var(--text-2); }
-.zone-desc { font-family: var(--sans); font-size: 14px; color: var(--text-2); line-height: 1.75; max-width: 560px; margin-top: 12px; }
+
+.zone-title {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+.zone-title em {
+  font-style: italic;
+  color: var(--text-2);
+}
+
+.zone-desc {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.7;
+  max-width: 54ch;
+  margin-top: 14px;
+}
 
 /* ── PHASES ── */
-.phases { display: flex; flex-direction: column; gap: 2px; }
-.phase {
-  display: grid; grid-template-columns: 96px 1fr auto;
-  border: 1px solid var(--rule); background: var(--bg);
-  cursor: pointer; overflow: hidden; transition: background 0.15s;
+.phases {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
 }
-.phase:hover { background: var(--bg-card); }
-.phase.open { background: var(--bg-card); border-color: var(--rule-mid); }
-.phase-num-col { padding: 24px 0 24px 24px; border-right: 1px solid var(--rule); display: flex; flex-direction: column; gap: 8px; }
-.phase-num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; }
+
+.phase {
+  display: grid;
+  grid-template-columns: 88px 1fr auto;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--bg);
+  cursor: pointer;
+  overflow: hidden;
+  transition: background 0.18s, border-color 0.18s;
+}
+
+.phase:hover {
+  background: var(--bg-card);
+  border-color: var(--rule-mid);
+}
+
+.phase.open {
+  background: var(--bg-card);
+  border-color: var(--rule-mid);
+}
+
+.phase-num-col {
+  padding: 22px 0 22px 20px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.phase-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+}
+
 .phase-num.claude { color: var(--claude); }
 .phase-num.cursor { color: var(--cursor); }
 .phase-num.both { color: var(--accent); }
-.phase-badge { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; display: inline-block; }
-.badge-claude { color: var(--claude); background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.15); }
-.badge-cursor { color: var(--cursor); background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.15); }
-.badge-both { color: var(--accent); background: rgba(196,149,74,0.08); border: 1px solid rgba(196,149,74,0.15); }
-.phase-time { font-family: var(--mono); font-size: 10px; color: var(--text-3); letter-spacing: 0.1em; }
-.phase-main { padding: 24px 28px; }
-.phase-title { font-size: 20px; font-weight: 400; letter-spacing: -0.01em; color: var(--text); margin-bottom: 5px; }
-.phase-hook { font-family: var(--sans); font-size: 13px; color: var(--text-2); }
-.phase-toggle { padding: 24px; display: flex; align-items: flex-start; }
-.phase-toggle svg { width: 15px; height: 15px; stroke: var(--text-3); transition: transform 0.2s; flex-shrink: 0; }
-.phase.open .phase-toggle svg { transform: rotate(45deg); }
-.phase-detail { display: none; grid-column: 1/-1; padding: 0 28px 32px 120px; border-top: 1px solid var(--rule); }
+
+.phase-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.badge-claude {
+  color: var(--claude);
+  background: oklch(0.78 0.14 155 / 0.1);
+  border: 1px solid oklch(0.78 0.14 155 / 0.2);
+}
+
+.badge-cursor {
+  color: var(--cursor);
+  background: oklch(0.74 0.12 285 / 0.1);
+  border: 1px solid oklch(0.74 0.12 285 / 0.2);
+}
+
+.badge-both {
+  color: var(--accent);
+  background: oklch(0.78 0.06 75 / 0.1);
+  border: 1px solid oklch(0.78 0.06 75 / 0.22);
+}
+
+.phase-time {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-3);
+  letter-spacing: 0.08em;
+}
+
+.phase-main { padding: 22px 24px; }
+
+.phase-title {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.25;
+}
+
+.phase-hook {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+.phase-toggle {
+  padding: 22px 20px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.phase-toggle svg {
+  width: 14px;
+  height: 14px;
+  stroke: var(--text-3);
+  transition: transform 0.2s, stroke 0.15s;
+  flex-shrink: 0;
+}
+
+.phase:hover .phase-toggle svg { stroke: var(--text-2); }
+.phase.open .phase-toggle svg { transform: rotate(45deg); stroke: var(--text); }
+
+.phase-detail {
+  display: none;
+  grid-column: 1 / -1;
+  padding: 0 24px 28px 108px;
+  border-top: 1px solid var(--rule);
+}
+
 .phase.open .phase-detail { display: block; }
 
-/* ── DETAIL INNER COMPONENTS ── */
-.phase-io { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; margin-bottom: 22px; }
-.io-block { padding: 13px 16px; background: var(--bg-2); border-left: 2px solid var(--rule-mid); }
-.io-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px; }
-.io-text { font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.55; }
+/* ── DETAIL INNER ── */
+.phase-io {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
 
-.step-list { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 22px; }
-.step-list li { font-family: var(--sans); font-size: 14px; color: var(--text-2); padding-left: 20px; position: relative; line-height: 1.65; }
-.step-list li::before { content: '—'; position: absolute; left: 0; color: var(--text-3); font-family: var(--mono); font-size: 11px; top: 2px; }
-.step-list li strong { font-family: var(--mono); font-weight: 400; font-size: 12px; color: var(--text); background: var(--bg-2); padding: 1px 6px; border: 1px solid var(--rule-mid); }
+.io-block {
+  padding: 14px 16px;
+  background: var(--bg-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--rule);
+}
 
-/* ── OUTPUT BLOCK ── */
-.output-block { padding: 14px 18px; background: var(--bg-2); border-left: 2px solid var(--accent); font-family: var(--mono); font-size: 12px; color: var(--text-2); letter-spacing: 0.04em; margin-bottom: 20px; }
-.output-block strong { color: var(--accent); font-weight: 300; margin-right: 8px; }
+.io-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
 
-/* ── CHECKPOINT BLOCK ── */
-.checkpoint { margin-top: 20px; margin-bottom: 20px; border: 1px solid rgba(74,222,128,0.15); background: rgba(74,222,128,0.04); padding: 20px 22px; }
-.checkpoint-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--claude); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.io-text {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+.step-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.step-list li {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text-2);
+  padding-left: 18px;
+  position: relative;
+  line-height: 1.65;
+}
+
+.step-list li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--text-3);
+  font-family: var(--mono);
+  font-size: 10px;
+  top: 3px;
+}
+
+.step-list li strong {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--text);
+  background: var(--bg-2);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--rule-mid);
+}
+
+/* ── OUTPUT ── */
+.output-block {
+  padding: 16px 20px;
+  background: var(--bg-2);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-2);
+  margin-bottom: 20px;
+}
+
+.output-block strong { color: var(--accent); font-weight: 500; margin-right: 8px; }
+
+.output-block--context {
+  margin: 0;
+  border-left-color: var(--claude);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.output-block__title {
+  display: block;
+  color: var(--claude);
+  font-weight: 500;
+  margin-bottom: 10px;
+  letter-spacing: 0.06em;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.output-block__desc {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+
+.context-pre {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-2);
+  line-height: 1.75;
+  white-space: pre-wrap;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  background: var(--bg);
+}
+
+/* ── CHECKPOINT ── */
+.checkpoint {
+  margin: 24px 0;
+  border: 1px solid oklch(0.78 0.14 155 / 0.22);
+  background: oklch(0.78 0.14 155 / 0.05);
+  padding: 20px 22px;
+  border-radius: var(--radius);
+}
+
+.checkpoint-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--claude);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .checkpoint-label::before { content: '✓'; font-size: 11px; }
-.checkpoint ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
-.checkpoint ul li { font-family: var(--sans); font-size: 13px; color: var(--text-2); padding-left: 18px; position: relative; line-height: 1.6; }
-.checkpoint ul li::before { content: '·'; position: absolute; left: 5px; color: var(--claude); font-size: 16px; top: -1px; }
 
-/* ── HANDOFF TO NEXT ── */
-.to-next { margin-top: 20px; border: 1px solid var(--accent-dim); background: rgba(196,149,74,0.04); padding: 20px 22px; }
-.to-next-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-.to-next-label::after { content: '→'; font-size: 13px; }
-.to-next p { font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 10px; }
+.checkpoint ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checkpoint ul li {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.checkpoint ul li::before {
+  content: '·';
+  position: absolute;
+  left: 4px;
+  color: var(--claude);
+  font-size: 14px;
+  top: -1px;
+}
+
+/* ── TO NEXT ── */
+.to-next {
+  margin-top: 24px;
+  border: 1px solid oklch(0.78 0.06 75 / 0.25);
+  background: oklch(0.78 0.06 75 / 0.04);
+  padding: 20px 22px;
+  border-radius: var(--radius);
+}
+
+.to-next-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+
+.to-next-label::after { content: ' →'; }
+
+.to-next p {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
 .to-next p:last-child { margin-bottom: 0; }
-.to-next ul { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-.to-next ul li { font-family: var(--sans); font-size: 13px; color: var(--text-2); padding-left: 18px; position: relative; line-height: 1.6; }
-.to-next ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent-dim); font-size: 11px; font-family: var(--mono); top: 2px; }
 
-/* ── PROMPT SECTION ── */
-.prompt-section { margin-top: 24px; }
-.prompt-section-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
-.prompt-box { background: var(--bg-2); border: 1px solid var(--rule-mid); border-left: 2px solid var(--accent); padding: 22px 26px; margin-bottom: 14px; position: relative; }
-.prompt-box pre { font-family: var(--mono); font-size: 13px; color: var(--text-2); line-height: 1.85; white-space: pre-wrap; word-break: break-word; }
-.prompt-box .fill { color: var(--accent); font-style: italic; }
-.copy-btn { position: absolute; top: 12px; right: 12px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); background: none; border: 1px solid var(--rule-mid); padding: 4px 10px; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
-.copy-btn:hover { color: var(--accent); border-color: var(--accent-dim); }
-.copy-btn.copied { color: var(--claude); border-color: var(--claude); }
+.to-next ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.to-next ul li {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.to-next ul li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent-dim);
+  font-size: 10px;
+  font-family: var(--mono);
+  top: 3px;
+}
+
+/* ── PROMPTS ── */
+.prompt-section { margin-top: 28px; }
+
+.prompt-section-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+.prompt-box {
+  background: var(--bg-2);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.prompt-box pre {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.prompt-box .fill {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  background: var(--bg);
+  border: 1px solid var(--rule-mid);
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.copy-btn:hover {
+  color: var(--text);
+  border-color: var(--text-3);
+  background: var(--bg-card);
+}
+
+.copy-btn.copied {
+  color: var(--claude);
+  border-color: oklch(0.78 0.14 155 / 0.35);
+}
 
 /* ── NOTES ── */
-.notes { margin-top: 18px; border-top: 1px solid var(--rule); padding-top: 4px; }
-.note-item { display: flex; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--rule); }
-.note-item:last-child { border-bottom: none; }
-.note-key { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.1em; min-width: 90px; flex-shrink: 0; padding-top: 2px; }
-.note-val { font-family: var(--sans); font-size: 13.5px; color: var(--text-2); line-height: 1.65; }
+.notes {
+  margin-top: 24px;
+  border-top: 1px solid var(--rule);
+  padding-top: 4px;
+}
 
-/* ── HANDOFF DIVIDER ── */
-.handoff-block { margin: 8px 0; padding: 36px 40px; border: 1px solid var(--accent-dim); background: rgba(196,149,74,0.04); display: grid; grid-template-columns: 52px 1fr; gap: 24px; align-items: start; }
-.handoff-icon { font-family: var(--mono); font-size: 30px; color: var(--accent-dim); line-height: 1; padding-top: 4px; }
-.handoff-headline { font-size: clamp(22px, 3vw, 32px); font-weight: 300; line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 16px; }
-.handoff-headline em { font-style: italic; color: var(--text-2); }
-.handoff-body { font-family: var(--sans); font-size: 14px; color: var(--text-2); line-height: 1.75; max-width: 560px; }
-.handoff-rule { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--accent-dim); font-family: var(--mono); font-size: 10px; color: var(--accent-dim); letter-spacing: 0.12em; text-transform: uppercase; }
+.note-item {
+  display: flex;
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.note-item:last-child { border-bottom: none; }
+
+.note-key {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  min-width: 88px;
+  flex-shrink: 0;
+  padding-top: 3px;
+}
+
+.note-val {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.65;
+}
+
+/* ── HANDOFF ── */
+.handoff-block {
+  margin: 56px 0;
+  padding: 40px 36px;
+  border: 1px solid oklch(0.78 0.06 75 / 0.28);
+  background: oklch(0.78 0.06 75 / 0.04);
+  border-radius: var(--radius);
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 24px;
+  align-items: start;
+  scroll-margin-top: 24px;
+}
+
+.handoff-icon {
+  font-family: var(--mono);
+  font-size: 28px;
+  color: var(--accent-dim);
+  line-height: 1;
+  padding-top: 4px;
+}
+
+.handoff-headline {
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.handoff-headline em {
+  font-style: italic;
+  color: var(--text-2);
+}
+
+.handoff-body {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.7;
+  max-width: 54ch;
+}
+
+.handoff-rule {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid oklch(0.78 0.06 75 / 0.2);
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--accent-dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
 
 /* ── PULL QUOTE ── */
-.pull-quote { padding: 52px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 8px 0; }
-.pull-quote blockquote { font-size: clamp(24px, 3.5vw, 36px); font-weight: 300; line-height: 1.25; letter-spacing: -0.01em; max-width: 800px; }
-.pull-quote blockquote em { font-style: italic; color: var(--text-2); }
-.pull-quote cite { display: block; margin-top: 22px; font-family: var(--mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.14em; text-transform: uppercase; }
+.pull-quote {
+  padding: 56px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin: 48px 0;
+}
+
+.pull-quote blockquote {
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  max-width: 42ch;
+}
+
+.pull-quote blockquote em {
+  font-style: italic;
+  color: var(--text-2);
+}
+
+.pull-quote cite {
+  display: block;
+  margin-top: 20px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
 
 /* ── CLOSING ── */
-.closing { padding: 72px 0 0; }
-.closing-headline { font-size: clamp(32px, 5vw, 54px); font-weight: 300; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 40px; max-width: 720px; }
-.closing-headline em { font-style: italic; color: var(--text-2); }
-.rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--rule); border: 1px solid var(--rule); }
-.rule-block { background: var(--bg); padding: 30px 26px; transition: background 0.2s; }
-.rule-block:hover { background: var(--bg-card); }
-.rule-num { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.16em; margin-bottom: 14px; }
-.rule-title { font-size: 19px; font-weight: 400; letter-spacing: -0.01em; margin-bottom: 11px; }
-.rule-body { font-family: var(--sans); font-size: 14px; color: var(--text-2); line-height: 1.7; }
+.closing {
+  padding: 80px 0 0;
+  scroll-margin-top: 24px;
+}
 
-/* ── PROJECT PARAMETERS ── */
-.params-outer { margin: 32px 0; border: 1px solid var(--accent-dim); }
-.params-header { padding: 22px 28px 18px; border-bottom: 1px solid var(--accent-dim); background: rgba(196,149,74,0.04); }
-.params-title { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
-.params-intro { font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-top: 8px; max-width: 640px; }
-.param-row { display: grid; grid-template-columns: 180px 1fr; border-bottom: 1px solid var(--rule); }
+.closing-headline {
+  font-size: clamp(30px, 4.5vw, 44px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 36px;
+  max-width: 16ch;
+}
+
+.closing-headline em {
+  font-style: italic;
+  color: var(--text-2);
+}
+
+.rules-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.rule-block {
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  transition: border-color 0.18s, background 0.18s;
+}
+
+.rule-block:hover {
+  background: var(--bg-elevated);
+  border-color: var(--rule-mid);
+}
+
+.rule-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+  margin-bottom: 12px;
+}
+
+.rule-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  margin-bottom: 10px;
+  line-height: 1.25;
+}
+
+.rule-body {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.65;
+}
+
+/* ── PARAMETERS ── */
+.params-outer {
+  margin: 40px 0;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: hidden;
+  scroll-margin-top: 24px;
+}
+
+.params-header {
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--bg-2);
+}
+
+.params-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.params-intro {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.7;
+  margin-top: 8px;
+  max-width: 58ch;
+}
+
+.param-row {
+  display: grid;
+  grid-template-columns: 168px 1fr;
+  border-bottom: 1px solid var(--rule);
+  background: var(--bg);
+}
+
 .param-row:last-child { border-bottom: none; }
-.param-name { padding: 16px 24px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text); text-transform: uppercase; border-right: 1px solid var(--rule); line-height: 1.5; }
-.param-detail { padding: 14px 24px; }
-.param-options { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 7px; }
-.param-opt { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border: 1px solid var(--rule-mid); color: var(--text-3); }
-.param-opt.hi { border-color: var(--accent-dim); color: var(--accent); }
-.param-desc { font-family: var(--sans); font-size: 12px; color: var(--text-3); line-height: 1.65; }
 
-/* ── WORKFLOW DEPTH ── */
-.mode-outer { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 8px; }
-.mode-col { padding: 24px 26px; background: var(--bg-card); border: 1px solid var(--rule-mid); }
-.mode-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px; }
+.param-name {
+  padding: 18px 20px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--text);
+  text-transform: uppercase;
+  border-right: 1px solid var(--rule);
+  line-height: 1.5;
+  background: var(--bg-2);
+}
+
+.param-detail { padding: 16px 20px; }
+
+.param-options {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.param-opt {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--rule-mid);
+  border-radius: 6px;
+  color: var(--text-3);
+}
+
+.param-opt.hi {
+  border-color: oklch(0.78 0.06 75 / 0.35);
+  color: var(--accent);
+  background: oklch(0.78 0.06 75 / 0.06);
+}
+
+.param-desc {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.65;
+}
+
+/* ── MODE CARDS ── */
+.mode-outer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.mode-col {
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+
+.mode-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
 .mode-label.full { color: var(--claude); }
 .mode-label.sprint { color: var(--cursor); }
-.mode-desc { font-family: var(--sans); font-size: 12px; color: var(--text-3); margin-bottom: 14px; line-height: 1.6; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
-.mode-rows { display: flex; flex-direction: column; gap: 6px; }
-.mode-row { font-family: var(--mono); font-size: 11px; color: var(--text-2); line-height: 1.5; }
-.mode-row strong { color: var(--text); font-weight: 400; }
-.mode-note { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--rule); font-family: var(--sans); font-size: 12px; color: var(--text-3); line-height: 1.65; }
 
-/* ── SELL THE IDEA TEST ── */
-.sell-test { margin-top: 20px; margin-bottom: 20px; border: 1px solid rgba(167,139,250,0.2); background: rgba(167,139,250,0.04); padding: 20px 22px; }
-.sell-test-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-.sell-test-label::before { content: '◈'; font-size: 11px; }
-.sell-test-intro { font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 14px; font-style: italic; }
-.sell-test ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
-.sell-test ul li { font-family: var(--sans); font-size: 13px; color: var(--text-2); padding-left: 18px; position: relative; line-height: 1.6; }
-.sell-test ul li::before { content: '·'; position: absolute; left: 5px; color: var(--cursor); font-size: 16px; top: -1px; }
-.sell-test-fail { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(167,139,250,0.15); font-family: var(--sans); font-size: 12.5px; color: var(--text-3); line-height: 1.65; }
-.sell-test-fail strong { color: var(--cursor); font-weight: 400; }
+.mode-desc {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-3);
+  margin-bottom: 16px;
+  line-height: 1.6;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 16px;
+}
+
+.mode-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mode-row {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+.mode-row strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.mode-note {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.65;
+}
+
+/* ── SELL TEST ── */
+.sell-test {
+  margin: 24px 0;
+  border: 1px solid oklch(0.74 0.12 285 / 0.25);
+  background: oklch(0.74 0.12 285 / 0.05);
+  padding: 20px 22px;
+  border-radius: var(--radius);
+}
+
+.sell-test-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cursor);
+  margin-bottom: 8px;
+}
+
+.sell-test-label::before { content: '◈ '; }
+
+.sell-test-intro {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.7;
+  margin-bottom: 14px;
+  font-style: italic;
+}
+
+.sell-test ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.sell-test ul li {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.sell-test ul li::before {
+  content: '·';
+  position: absolute;
+  left: 4px;
+  color: var(--cursor);
+  font-size: 14px;
+  top: -1px;
+}
+
+.sell-test-fail {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid oklch(0.74 0.12 285 / 0.18);
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.65;
+}
+
+.sell-test-fail strong {
+  color: var(--cursor);
+  font-weight: 500;
+}
+
+/* ── PANELS (signature, etc.) ── */
+.panel {
+  margin: 40px 0;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.panel--cursor {
+  border-color: oklch(0.74 0.12 285 / 0.28);
+}
+
+.panel-header {
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--bg-2);
+}
+
+.panel--cursor .panel-header {
+  border-bottom-color: oklch(0.74 0.12 285 / 0.15);
+  background: oklch(0.74 0.12 285 / 0.04);
+}
+
+.panel-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cursor);
+  margin-bottom: 8px;
+}
+
+.panel-intro {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.7;
+  max-width: 58ch;
+}
+
+.panel-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+}
+
+.panel-grid--2 { grid-template-columns: 1fr 1fr; }
+
+.panel-cell {
+  padding: 20px 22px;
+  background: var(--bg-card);
+}
+
+.panel-cell__label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cursor);
+  margin-bottom: 8px;
+}
+
+.panel-cell__body {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.65;
+  margin-bottom: 10px;
+}
+
+.panel-cell__note {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+.panel-footer {
+  padding: 16px 24px 18px;
+  border-top: 1px solid var(--rule);
+  background: var(--bg-2);
+}
+
+.panel--cursor .panel-footer {
+  border-top-color: oklch(0.74 0.12 285 / 0.15);
+}
+
+.panel-footer__label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--text-3);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.panel-footer__text {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.65;
+}
+
+.panel-footer__text strong {
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+/* ── INFO CARDS & LOOKUP ── */
+.info-card {
+  margin: 28px 0;
+  padding: 22px 24px;
+  border: 1px solid oklch(0.78 0.06 75 / 0.22);
+  background: oklch(0.78 0.06 75 / 0.04);
+  border-radius: var(--radius);
+}
+
+.info-card--neutral {
+  border-color: var(--rule-mid);
+  background: var(--bg-2);
+}
+
+.info-card__label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+
+.info-card--neutral .info-card__label { color: var(--text-2); }
+
+.info-card__intro {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.info-card__sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-3);
+  margin-bottom: 12px;
+  letter-spacing: 0.06em;
+}
+
+.info-card__foot {
+  margin-top: 14px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.7;
+}
+
+.lookup { display: flex; flex-direction: column; }
+
+.lookup-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.lookup-row:last-child { border-bottom: none; }
+
+.lookup-row__cond {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+.lookup-row__action {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  line-height: 1.5;
+}
+
+.tag-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.tag-chip {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-2);
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .page {
+    grid-template-columns: 1fr;
+    padding-bottom: 80px;
+  }
+
+  .site-nav {
+    position: relative;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    margin-right: 0;
+    margin-bottom: 32px;
+    padding: 24px 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    align-items: flex-end;
+  }
+
+  .site-nav__brand { margin-bottom: 0; flex: 1 1 100%; }
+  .site-nav__group { margin-bottom: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: center; }
+  .site-nav__label { display: none; }
+  .site-nav a { padding: 0; font-size: 11px; }
+
+  .main { max-width: none; }
+}
 
 @media (max-width: 640px) {
-  body { padding: 0 24px 80px; }
   .phase { grid-template-columns: 1fr; }
-  .phase-num-col { border-right: none; border-bottom: 1px solid var(--rule); flex-direction: row; padding: 16px 20px; }
-  .phase-detail { padding-left: 20px; }
+  .phase-num-col {
+    border-right: none;
+    border-bottom: 1px solid var(--rule);
+    flex-direction: row;
+    align-items: center;
+    padding: 14px 18px;
+    gap: 12px;
+  }
+  .phase-detail { padding: 0 18px 24px; }
   .phase-io { grid-template-columns: 1fr; }
-  .handoff-block { grid-template-columns: 1fr; }
+  .handoff-block { grid-template-columns: 1fr; padding: 28px 24px; }
   .rules-grid { grid-template-columns: 1fr; }
-  .masthead-meta, .legend { flex-direction: column; gap: 20px; }
+  .masthead-meta, .legend { flex-direction: column; gap: 16px; }
   .param-row { grid-template-columns: 1fr; }
   .param-name { border-right: none; border-bottom: 1px solid var(--rule); }
   .mode-outer { grid-template-columns: 1fr; }
+  .panel-grid--2 { grid-template-columns: 1fr; }
+  .lookup-row { grid-template-columns: 1fr; gap: 8px; }
+  .tag-grid { grid-template-columns: 1fr; }
 }
+
 </style>
 </head>
 <body>
+
+<div class="page">
+<nav class="site-nav" aria-label="Guide sections">
+  <p class="site-nav__brand"><strong>Concept to Code</strong> Field Guide · 2026</p>
+  <div class="site-nav__group">
+    <p class="site-nav__label">Overview</p>
+    <a href="#top">Introduction</a>
+    <a href="#workflow">Workflow depth</a>
+    <a href="#parameters">Parameters</a>
+    <a href="#signature">Signature</a>
+  </div>
+  <div class="site-nav__group">
+    <p class="site-nav__label">Phase A</p>
+    <a href="#phase-a" class="is-claude">Ideation</a>
+    <a href="#stage-055" class="is-claude">Stage 05.5</a>
+  </div>
+  <div class="site-nav__group">
+    <p class="site-nav__label">Handoff</p>
+    <a href="#handoff">Claude → Cursor</a>
+  </div>
+  <div class="site-nav__group">
+    <p class="site-nav__label">Phase B</p>
+    <a href="#phase-b" class="is-cursor">Execution</a>
+  </div>
+  <div class="site-nav__group">
+    <p class="site-nav__label">Close</p>
+    <a href="#rules">Four rules</a>
+  </div>
+</nav>
+
+<main class="main" id="top">
 
 <header class="masthead">
   <p class="masthead-label">Concept to Code · Complete Field Guide · 2026</p>
@@ -225,10 +1414,10 @@ body { max-width: 960px; margin: 0 auto; padding: 0 52px 120px; }
 </div>
 
 <!-- ── WORKFLOW DEPTH ── -->
-<div style="margin: 0 0 8px;">
-  <div style="padding: 22px 0 16px; border-bottom: 1px solid var(--rule); margin-bottom: 16px;">
-    <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-2); margin-bottom: 8px;">Workflow Depth + Execution Fidelity — set before Stage 01</div>
-    <p style="font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; max-width: 640px;">Two decisions that don't require brief context: <strong style="font-weight: 400; color: var(--text);">Workflow Depth</strong> (how far to go) and <strong style="font-weight: 400; color: var(--text);">Execution Fidelity</strong> (the quality bar). All other parameters — Creative Intensity, Generic Distance, Visual Risk, Reference Distance, Commercial Clarity — are set <em>after</em> Stage 01 when the category and audience are understood. Stage 02 Framework Selection and the Mini Traceability Check are never compressed regardless of mode.</p>
+<section class="preface" id="workflow">
+  <div class="preface-header">
+    <p class="preface-label">Workflow Depth + Execution Fidelity — set before Stage 01</p>
+    <p class="preface-text">Two decisions that don't require brief context: <strong>Workflow Depth</strong> (how far to go) and <strong>Execution Fidelity</strong> (the quality bar). All other parameters — Creative Intensity, Generic Distance, Visual Risk, Reference Distance, Commercial Clarity — are set <em>after</em> Stage 01 when the category and audience are understood. Stage 02 Framework Selection and the Mini Traceability Check are never compressed regardless of mode.</p>
   </div>
   <div class="mode-outer">
     <div class="mode-col">
@@ -260,13 +1449,13 @@ body { max-width: 960px; margin: 0 auto; padding: 0 52px 120px; }
       </div>
       <div class="mode-note">Stage 02 and the Mini Traceability Check are never compressed in Sprint Mode. These are where the concept is born or where it fails silently.
 
-<strong style="color: var(--cursor); font-weight: 400;">Sprint Mode quality floor:</strong> The Sell the Idea Test is a hard stop. A failing concept does not go to Cursor regardless of time pressure. Sprint compresses depth — it does not lower the concept quality bar.</div>
+<strong class="hi-cursor">Sprint Mode quality floor:</strong> The Sell the Idea Test is a hard stop. A failing concept does not go to Cursor regardless of time pressure. Sprint compresses depth — it does not lower the concept quality bar.</div>
     </div>
   </div>
-</div>
+</section>
 
 <!-- ═══════════════════════════════════ PHASE A ═══════════════════════════════════ -->
-<div class="zone-header">
+<div class="zone-header" id="phase-a">
   <p class="zone-label claude">Phase A · Claude</p>
   <h2 class="zone-title">Ideation —<br><em>discovering the concept</em></h2>
   <p class="zone-desc">Everything here is open exploration. You are searching, not building. Do not close any direction prematurely. The concept must be fully formed and amplified before you cross the handoff into Cursor.</p>
@@ -346,8 +1535,7 @@ OPEN QUESTIONS
 Everything unclear or missing — must be resolved before Stage 02.</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Category Audit</div>
       <div class="prompt-box" id="p01b">
         <button class="copy-btn" onclick="copyPrompt('p01b',this)">Copy</button>
@@ -372,8 +1560,7 @@ What emotional territory does no competitor currently own? [one sentence — spe
 Note: Dominant / Residual / Emergent code analysis is handled in Stage 02 if Semiotic Engineering is selected as the framework. Do not duplicate it here.</pre>
       </div>
     </div>
-
-    <div class="checkpoint">
+<div class="checkpoint">
       <div class="checkpoint-label">Checkpoint — what you must have before moving to Stage 02</div>
       <ul>
         <li>A completed brief with Core Transformation written as a human truth, not a product claim</li>
@@ -400,7 +1587,7 @@ Note: Dominant / Residual / Emergent code analysis is handled in Stage 02 if Sem
 </div>
 
 <!-- ── PROJECT PARAMETERS ── -->
-<div class="params-outer">
+<div class="params-outer" id="parameters">
   <div class="params-header">
     <div class="params-title">⬡ Project Parameters — set after Stage 01, informed by the brief</div>
     <p class="params-intro">Set these four parameters after completing Stage 01 — the brief tells you how saturated the category is, what the audience needs, and how much creative risk the whitespace supports. Narrative Depth follows automatically from framework selection. Visual Risk is set by Creative Intensity. Execution Fidelity is declared in Workflow Depth above. Four decisions, not seven.</p>
@@ -454,10 +1641,10 @@ Note: Dominant / Residual / Emergent code analysis is handled in Stage 02 if Sem
   </div>
 
 
-<div class="output-block" style="margin: 0; border-left-color: var(--claude); border-top: 1px solid var(--rule);">
-  <strong style="display: block; color: var(--claude); font-weight: 300; margin-bottom: 10px; letter-spacing: 0.08em;">Project Context Block — generate this from your choices above</strong>
-  <div style="font-family: var(--sans); font-size: 12px; color: var(--text-2); line-height: 1.65; margin-bottom: 12px;">Copy and paste this block into Stage 02 (Framework Selection), Stage 05 (CDD Synthesis), and Stage 08 (Strategic Review). It calibrates every AI output to your declared parameters.</div>
-  <pre style="font-family: var(--mono); font-size: 11px; color: var(--text-2); line-height: 1.8; white-space: pre-wrap; border: 1px solid var(--rule-mid); padding: 14px 18px; background: var(--bg);">PROJECT CONTEXT
+<div class="output-block output-block--context">
+  <strong class="output-block__title">Project Context Block — generate this from your choices above</strong>
+  <p class="output-block__desc">Copy and paste this block into Stage 02 (Framework Selection), Stage 05 (CDD Synthesis), and Stage 08 (Strategic Review). It calibrates every AI output to your declared parameters.</p>
+  <pre class="context-pre">PROJECT CONTEXT
 Mode: [Full / Sprint]  ·  Execution Fidelity: [Sketch / Prototype / Portfolio-grade]
 Creative Intensity: [1 / 2 / 3 / 4 / 5]  ·  Generic Distance: [Low / Medium / High / Extreme]
 Commercial Clarity: [Low / Medium / High]  ·  Visual Risk: [Conservative / Controlled / Radical]
@@ -471,38 +1658,38 @@ Where a parameter conflicts with a default AI output, the parameter takes preced
 
 
 <!-- ── CREATIVE DIRECTOR SIGNATURE ── -->
-<div style="margin: 0 0 8px; border: 1px solid rgba(167,139,250,0.25); background: rgba(167,139,250,0.04);">
-  <div style="padding: 22px 28px 18px; border-bottom: 1px solid rgba(167,139,250,0.15);">
-    <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px;">◈ Creative Director Signature — personal creative DNA</div>
-    <p style="font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; max-width: 640px;">The difference between AI output and art director output is personal contamination: accumulated taste, current obsessions, known failures, irrational refusals. Fill these four fields honestly — not correctly. Vague answers produce generic contamination. These fields make the output specific to <em>who is running this</em>, not just to what the brief says.</p>
+<section class="panel panel--cursor" id="signature">
+  <div class="panel-header">
+    <p class="panel-label">◈ Creative Director Signature — personal creative DNA</p>
+    <p class="panel-intro">The difference between AI output and art director output is personal contamination: accumulated taste, current obsessions, known failures, irrational refusals. Fill these four fields honestly — not correctly. Vague answers produce generic contamination. These fields make the output specific to <em>who is running this</em>, not just to what the brief says.</p>
   </div>
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 2px;">
-    <div style="padding: 20px 24px; background: var(--bg-card);">
-      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px;">1 · Current Obsession</div>
-      <p style="font-family: var(--sans); font-size: 12px; color: var(--text-2); line-height: 1.65; margin-bottom: 10px;">What you can't stop thinking about right now — completely unrelated to this project. A specific film, building, album artwork, sport, restaurant, paper. Not a genre or category. One specific thing.</p>
-      <p style="font-family: var(--mono); font-size: 11px; color: var(--text-3); line-height: 1.5;">→ Becomes a mandatory reference in Stage 04a. Claude will explain its connection to Core Tension — especially if that connection isn't obvious.</p>
+  <div class="panel-grid panel-grid--2">
+    <div class="panel-cell">
+      <p class="panel-cell__label">1 · Current Obsession</p>
+      <p class="panel-cell__body">What you can't stop thinking about right now — completely unrelated to this project. A specific film, building, album artwork, sport, restaurant, paper. Not a genre or category. One specific thing.</p>
+      <p class="panel-cell__note">→ Becomes a mandatory reference in Stage 04a. Claude will explain its connection to Core Tension — especially if that connection isn't obvious.</p>
     </div>
-    <div style="padding: 20px 24px; background: var(--bg-card);">
-      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px;">2 · Personal Refusal</div>
-      <p style="font-family: var(--sans); font-size: 12px; color: var(--text-2); line-height: 1.65; margin-bottom: 10px;">One thing you will not do on this project regardless of how appropriate it seems. Personal, irrational, possibly unjustifiable. Not from the brief — from your own experience with what you've seen fail.</p>
-      <p style="font-family: var(--mono); font-size: 11px; color: var(--text-3); line-height: 1.5;">→ Appended to Exclusion Zone. Cannot be overridden by brief logic or framework recommendations.</p>
+    <div class="panel-cell">
+      <p class="panel-cell__label">2 · Personal Refusal</p>
+      <p class="panel-cell__body">One thing you will not do on this project regardless of how appropriate it seems. Personal, irrational, possibly unjustifiable. Not from the brief — from your own experience with what you've seen fail.</p>
+      <p class="panel-cell__note">→ Appended to Exclusion Zone. Cannot be overridden by brief logic or framework recommendations.</p>
     </div>
-    <div style="padding: 20px 24px; background: var(--bg-card);">
-      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px;">3 · Taste Temperature</div>
-      <p style="font-family: var(--sans); font-size: 12px; color: var(--text-2); line-height: 1.65; margin-bottom: 10px;">What kind of work genuinely excites you right now. Not the correct answer — honest. It may contradict the brief. That tension is productive.</p>
-      <p style="font-family: var(--mono); font-size: 11px; color: var(--text-3); line-height: 1.5;">→ Informs Stage 03 concept selection and Stage 04 reference choices.</p>
+    <div class="panel-cell">
+      <p class="panel-cell__label">3 · Taste Temperature</p>
+      <p class="panel-cell__body">What kind of work genuinely excites you right now. Not the correct answer — honest. It may contradict the brief. That tension is productive.</p>
+      <p class="panel-cell__note">→ Informs Stage 03 concept selection and Stage 04 reference choices.</p>
     </div>
-    <div style="padding: 20px 24px; background: var(--bg-card);">
-      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cursor); margin-bottom: 8px;">4 · Known Trap</div>
-      <p style="font-family: var(--sans); font-size: 12px; color: var(--text-2); line-height: 1.65; margin-bottom: 10px;">The pattern you personally fall into. Something that looks good in your hands but you've learned leads to a weaker result. Not a weakness — a tendency.</p>
-      <p style="font-family: var(--mono); font-size: 11px; color: var(--text-3); line-height: 1.5;">→ Becomes a named check in Stage 08 Strategic Review. The critic looks for it explicitly.</p>
+    <div class="panel-cell">
+      <p class="panel-cell__label">4 · Known Trap</p>
+      <p class="panel-cell__body">The pattern you personally fall into. Something that looks good in your hands but you've learned leads to a weaker result. Not a weakness — a tendency.</p>
+      <p class="panel-cell__note">→ Becomes a named check in Stage 08 Strategic Review. The critic looks for it explicitly.</p>
     </div>
   </div>
-  <div style="padding: 16px 28px 18px; border-top: 1px solid rgba(167,139,250,0.15);">
-    <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text-3); margin-bottom: 6px;">Quality check — before proceeding</div>
-    <p style="font-family: var(--sans); font-size: 12px; color: var(--text-3); line-height: 1.65;">Two different creative directors running the same brief should produce two different Signature Blocks. If yours could belong to anyone — rewrite the fields that are still generic. See <strong style="color: var(--text-2); font-weight: 400;">creative-director-signature.md</strong> for full protocol and Signature Summary template.</p>
+  <div class="panel-footer">
+    <p class="panel-footer__label">Quality check — before proceeding</p>
+    <p class="panel-footer__text">Two different creative directors running the same brief should produce two different Signature Blocks. If yours could belong to anyone — rewrite the fields that are still generic. See <strong>creative-director-signature.md</strong> for full protocol and Signature Summary template.</p>
   </div>
-</div>
+</section>
 
 <!-- ── STAGE 02 ── -->
 <div class="phase" onclick="this.classList.toggle('open')">
@@ -552,34 +1739,33 @@ AVOID FOR THIS PROJECT: [frameworks that would misfire, with reasons]</pre>
       </div>
     </div>
 
-    <div style="margin: 24px 0; padding: 20px 22px; border: 1px solid var(--accent-dim); background: rgba(196,149,74,0.06);">
-      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px;">⬡ Decision Logic — Which Path to Take</div>
-      <div style="font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 16px;">Read the brief characteristics and follow the matching path. When two conditions apply equally — run both and compare at Stage 03 selection.</div>
-      <div style="display: grid; gap: 2px;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">IF category is visually saturated<br>and any obvious direction looks like a competitor</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ GHOSTY COLLIDER<br>Fragment Harvest → Ghost Extraction → Collision Matrix → Vision Crystallization → Reality Bridge</div>
+    <div class="info-card">
+      <p class="info-card__label">⬡ Decision Logic — Which Path to Take</p>
+      <p class="info-card__intro">Read the brief characteristics and follow the matching path. When two conditions apply equally — run both and compare at Stage 03 selection.</p>
+      <div class="lookup">
+        <div class="lookup-row">
+          <div class="lookup-row__cond">IF category is visually saturated<br>and any obvious direction looks like a competitor</div>
+          <div class="lookup-row__action">→ GHOSTY COLLIDER<br>Fragment Harvest → Ghost Extraction → Collision Matrix → Vision Crystallization → Reality Bridge</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">IF brand positioning / visual identity work<br>and you need to understand what the category already says</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ SEMIOTIC ENGINEERING<br>Brand Deconstruction → Code Identification → Cultural Scoping → Gap Elimination</div>
+        <div class="lookup-row">
+          <div class="lookup-row__cond">IF brand positioning / visual identity work<br>and you need to understand what the category already says</div>
+          <div class="lookup-row__action">→ SEMIOTIC ENGINEERING<br>Brand Deconstruction → Code Identification → Cultural Scoping → Gap Elimination</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">IF B2B, enterprise, complex product<br>and the audience justifies decisions to others</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ STORYKERNEL (+ optional DIMENSIONAL TIME)<br>Existential Threat → Mentor → Talisman → New Potential</div>
+        <div class="lookup-row">
+          <div class="lookup-row__cond">IF B2B, enterprise, complex product<br>and the audience justifies decisions to others</div>
+          <div class="lookup-row__action">→ STORYKERNEL (+ optional DIMENSIONAL TIME)<br>Existential Threat → Mentor → Talisman → New Potential</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">IF premium brand or portfolio site<br>and depth + return engagement matters more than speed</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ LAYERED METAPHOR / CONCEPTUAL BLENDING<br>Blended Space → First Read / Second Read / Deep Read</div>
+        <div class="lookup-row">
+          <div class="lookup-row__cond">IF premium brand or portfolio site<br>and depth + return engagement matters more than speed</div>
+          <div class="lookup-row__action">→ LAYERED METAPHOR / CONCEPTUAL BLENDING<br>Blended Space → First Read / Second Read / Deep Read</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0;">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">IF brief is ambiguous OR<br>two paths score equally from above</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ RUN BOTH, COMPARE AT STAGE 03<br>Use Selection + Amplification to choose the stronger concept output</div>
+        <div class="lookup-row">
+          <div class="lookup-row__cond">IF brief is ambiguous OR<br>two paths score equally from above</div>
+          <div class="lookup-row__action">→ RUN BOTH, COMPARE AT STAGE 03<br>Use Selection + Amplification to choose the stronger concept output</div>
         </div>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Ghosty Collider (path A)</div>
       <div class="prompt-box" id="p02a">
         <button class="copy-btn" onclick="copyPrompt('p02a',this)">Copy</button>
@@ -638,8 +1824,7 @@ COLLISION 2: [same format]
 STRONGEST: [which and why — one sentence]</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Semiotic Engineering (path B)</div>
       <div class="prompt-box" id="p02b">
         <button class="copy-btn" onclick="copyPrompt('p02b',this)">Copy</button>
@@ -674,9 +1859,7 @@ Output:
 DOMINANT CODES / RESIDUAL CODES / EMERGENT CODES / GAP / WHITESPACE OPPORTUNITY / SMASHABLE ASSET</pre>
       </div>
     </div>
-
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — StoryKernel (path C)</div>
       <div class="prompt-box" id="p02c">
         <button class="copy-btn" onclick="copyPrompt('p02c',this)">Copy</button>
@@ -731,8 +1914,7 @@ TALISMAN: [transformation arc complete, no product nouns]
 DIMENSIONAL TIME: [activated / not activated — reason]</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Layered Metaphor / Conceptual Blending (path D)</div>
       <div class="prompt-box" id="p02d">
         <button class="copy-btn" onclick="copyPrompt('p02d',this)">Copy</button>
@@ -790,8 +1972,7 @@ BLENDED SPACE: [identified as a new object, not a metaphor]
 CORE TENSION TO PROTECT: [named — one specific, irreducible thing]</pre>
       </div>
     </div>
-
-    <div class="checkpoint">
+<div class="checkpoint">
       <div class="checkpoint-label">Checkpoint — what you must have before moving to Stage 03</div>
       <ul>
         <li>Framework selected and documented — with specific reason it fits this brief (not "it usually works")</li>
@@ -862,8 +2043,7 @@ For each concept:
 CONCEPT [N]: [title] · LOGLINE: [one sentence] · CORE TENSION: [contradiction] · EMOTIONAL PROMISE: [one word] · VISUAL METAPHOR: [what the camera sees] · WHY NOW: [cultural reason] · GHOST VISIBLE: [yes/no + how] · 3-LEVEL PROBLEM: External / Internal / Philosophical · NFRT: N[·] F[·] R[·] T[·] · RISK: [what could fail]</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Concept Generation (Semiotic Engineering path)</div>
       <div class="prompt-box" id="p03b">
         <button class="copy-btn" onclick="copyPrompt('p03b',this)">Copy</button>
@@ -881,8 +2061,7 @@ For each concept:
 CONCEPT [N]: [title] · CODE TERRITORY: [which emergent code] · LOGLINE: [one sentence] · CORE TENSION: [contradiction] · EMOTIONAL PROMISE: [one word] · VISUAL METAPHOR: [what the camera sees] · SMASHABLE ASSET: [one element recognisable without a logo] · WHY NOW: [cultural shift] · NFRT: N[·] F[·] R[·] T[·] · RISK: [what could fail]</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Concept Generation (StoryKernel path)</div>
       <div class="prompt-box" id="p03c">
         <button class="copy-btn" onclick="copyPrompt('p03c',this)">Copy</button>
@@ -902,8 +2081,7 @@ For each concept:
 CONCEPT [N]: [title] · EXISTENTIAL THREAT: [external verifiable shift] · MENTOR POSITIONING: [how trust is earned] · TALISMAN ROLE: [what product enables] · LOGLINE: [one sentence] · VISUAL SYSTEM PRINCIPLE: [if Dimensional Time] · WHY NOW: [market evidence] · NFRT: N[·] F[·] R[·] T[·] · RISK: [what could fail]</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Concept Generation (Layered Metaphor path)</div>
       <div class="prompt-box" id="p03d">
         <button class="copy-btn" onclick="copyPrompt('p03d',this)">Copy</button>
@@ -921,8 +2099,7 @@ For each concept:
 CONCEPT [N]: [title] · BLENDED SPACE: [two domains + new object at intersection] · LOGLINE: [one sentence] · FIRST READ: [communicates in 3 seconds] · SECOND READ: [what interaction reveals] · DEEP READ: [what rewards return] · VISUAL METAPHOR: [what the camera sees] · NFRT: N[·] F[·] R[·] T[·] · RISK: [what could fail]</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Selection + Amplification (all paths)</div>
       <div class="prompt-box" id="p03e">
         <button class="copy-btn" onclick="copyPrompt('p03e',this)">Copy</button>
@@ -945,8 +2122,7 @@ Test 1: Could someone name an existing site from these 10 words? [yes → rewrit
 Test 2: Could someone guess the product category? [yes → rewrite / no → proceed]</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Visual Metaphor Contamination Check — run before Selection</div>
       <div class="prompt-box" id="p03_contam">
         <button class="copy-btn" onclick="copyPrompt('p03_contam',this)">Copy</button>
@@ -972,8 +2148,7 @@ VERDICT: [proceed with original / proceed with alternative / generate both and d
 If no clusters detected for a concept: mark as CLEAR and proceed.</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Concept Kill Test — run after Selection + Amplification</div>
       <div class="prompt-box" id="p03_kill">
         <button class="copy-btn" onclick="copyPrompt('p03_kill',this)">Copy</button>
@@ -999,8 +2174,7 @@ If ANTI-CASE sounds more convincing than RESPONSE → return to Stage 03 and gen
 If RESPONSE holds → proceed to Stage 04 with WHAT THE ANTI-CASE REVEALS as a named execution risk.</pre>
       </div>
     </div>
-
-    <div class="checkpoint">
+<div class="checkpoint">
       <div class="checkpoint-label">Checkpoint — what you must have before moving to Stage 04</div>
       <ul>
         <li>3–5 concepts, each structurally distinct — different emotional register, tension, visual territory</li>
@@ -1078,8 +2252,7 @@ For the Current Obsession reference, add:
 WHY THIS OBSESSION IS RELEVANT: [the non-obvious connection to Core Tension — if the connection is obvious, look for a deeper one]</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Stage 04b · Visual Language Synthesis</div>
       <div class="prompt-box" id="p04b_synth">
         <button class="copy-btn" onclick="copyPrompt('p04b_synth',this)">Copy</button>
@@ -1119,8 +2292,7 @@ CORE TENSION TO PROTECT: [one Visual Principle that cannot be removed without lo
 MINIMUM VIABLE EXPRESSION: [reduced scope version that preserves the central tension]</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Typography Direction (informed by Stage 04b Visual Principles)</div>
       <div class="prompt-box" id="p04c_typo">
         <button class="copy-btn" onclick="copyPrompt('p04c_typo',this)">Copy</button>
@@ -1137,8 +2309,7 @@ Step 2 — Propose 2–3 directions. For each:
 DIRECTION [N] · HEADLINE FAMILY [font + weights] · BODY FAMILY [font + weight] · MONO/ACCENT (if applicable) · PAIRING LOGIC [structural reason] · WHAT THIS ARGUES [before a word is read] · INDUSTRY SIGNAL [comply / break / own emergent] · RISK</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Color System (informed by Stage 04b Visual Principles)</div>
       <div class="prompt-box" id="p04d_color">
         <button class="copy-btn" onclick="copyPrompt('p04d_color',this)">Copy</button>
@@ -1156,8 +2327,7 @@ Narrative states: Exposition / Rising Action / Climax / Resolution
 WHAT THIS PALETTE REFUSES · RISK</pre>
       </div>
     </div>
-
-    <div class="checkpoint">
+<div class="checkpoint">
       <div class="checkpoint-label">Checkpoint — what you must have before moving to Stage 05</div>
       <ul>
         <li>3–5 references analyzed in Stage 04a — each with TEACHES + REFUSES. Current Obsession reference present with non-obvious Core Tension connection named.</li>
@@ -1331,8 +2501,7 @@ WHY: [what makes it still familiar]
 DIRECTION: [what would make it specific to this concept only]</pre>
       </div>
     </div>
-
-    <div class="checkpoint">
+<div class="checkpoint">
       <div class="checkpoint-label">Checkpoint — what you must have before crossing the handoff</div>
       <ul>
         <li>Core Idea in one sentence that no competitor could claim — tested against the Exclusion Zone</li>
@@ -1365,7 +2534,7 @@ DIRECTION: [what would make it specific to this concept only]</pre>
 </div><!-- end phases -->
 
 <!-- ── STAGE 05.5 ── -->
-<div class="zone-header" style="padding-top: 32px;">
+<div class="zone-header zone-header--spaced" id="stage-055">
   <p class="zone-label claude">Stage 05.5 · Claude · Optional but recommended</p>
   <h2 class="zone-title">Concept Proof —<br><em>rendered before handoff</em></h2>
   <p class="zone-desc">Validate the visual system in a real rendered environment before Cursor execution begins. Two deliverables: a Style Reference showing the type and colour system, and 1–3 concept sections proving the system works at narrative scale. No new tools. No interpretation. Claude executes the CDD variables directly.</p>
@@ -1397,34 +2566,33 @@ DIRECTION: [what would make it specific to this concept only]</pre>
       <li>This file is throwaway. It is a proof, not a deliverable. It does not replace the CDD. Cursor builds from the CDD — not from this file.</li>
     </ul>
 
-    <div style="margin: 24px 0; padding: 20px 22px; border: 1px solid var(--accent-dim); background: rgba(196,149,74,0.06);">
-      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px;">⬡ Section Selection — Deliverable B</div>
-      <div style="font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 16px;">Hero is always rendered. Select one additional section based on project type — or none if the brief is purely brand/campaign.</div>
-      <div style="display: grid; gap: 2px;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">Any project</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Hero section (mandatory)</div>
+    <div class="info-card">
+      <p class="info-card__label">⬡ Section Selection — Deliverable B</p>
+      <p class="info-card__intro">Hero is always rendered. Select one additional section based on project type — or none if the brief is purely brand/campaign.</p>
+      <div class="lookup">
+        <div class="lookup-row">
+          <div class="lookup-row__cond">Any project</div>
+          <div class="lookup-row__action">→ Hero section (mandatory)</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">E-commerce</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Hero + Product Listing Page or Product Detail Page</div>
+        <div class="lookup-row">
+          <div class="lookup-row__cond">E-commerce</div>
+          <div class="lookup-row__action">→ Hero + Product Listing Page or Product Detail Page</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">B2B / SaaS / Complex product</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Hero + USP Featured section</div>
+        <div class="lookup-row">
+          <div class="lookup-row__cond">B2B / SaaS / Complex product</div>
+          <div class="lookup-row__action">→ Hero + USP Featured section</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">Editorial / Content platform</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Hero + Blog Post layout</div>
+        <div class="lookup-row">
+          <div class="lookup-row__cond">Editorial / Content platform</div>
+          <div class="lookup-row__action">→ Hero + Blog Post layout</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0;">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">Brand / Campaign / Portfolio</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Hero only</div>
+        <div class="lookup-row">
+          <div class="lookup-row__cond">Brand / Campaign / Portfolio</div>
+          <div class="lookup-row__action">→ Hero only</div>
         </div>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Deliverable A: Style Reference</div>
       <div class="prompt-box" id="p055a">
         <button class="copy-btn" onclick="copyPrompt('p055a',this)">Copy</button>
@@ -1474,8 +2642,7 @@ Rules:
 — Label every component state in var(--font-mono) so the system is readable as a reference</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Deliverable B: Concept Section(s)</div>
       <div class="prompt-box" id="p055b">
         <button class="copy-btn" onclick="copyPrompt('p055b',this)">Copy</button>
@@ -1512,8 +2679,7 @@ Close your eyes. Open for 3 seconds. Close again.
 If any answer is no — flag it before outputting.</pre>
       </div>
     </div>
-
-    <div class="sell-test">
+<div class="sell-test">
       <div class="sell-test-label">Sell the Idea Test — emotional gate before Cursor</div>
       <p class="sell-test-intro">The page should not merely explain the idea. It should make the idea feel inevitable.</p>
       <ul>
@@ -1525,8 +2691,7 @@ If any answer is no — flag it before outputting.</pre>
       </ul>
       <div class="sell-test-fail"><strong>If any answer fails:</strong> return to Stage 05. Focus on the underspecified field — Core Idea, Visual Metaphor, Visual Principles, Typography System, Color System, or Core Tension to Protect. Do not proceed to Cursor with a failing concept proof. The Traceability Check may reveal which field is the source of the problem.</div>
     </div>
-
-    <div class="checkpoint">
+<div class="checkpoint">
       <div class="checkpoint-label">System checkpoint — CSS and variable discipline</div>
       <ul>
         <li>Style Reference renders all CSS variables correctly — no fallbacks, no overrides visible</li>
@@ -1554,7 +2719,7 @@ If any answer is no — flag it before outputting.</pre>
 </div><!-- end 05.5 phases -->
 
 <!-- ── HANDOFF ── -->
-<div class="handoff-block">
+<div class="handoff-block" id="handoff">
   <div class="handoff-icon">→</div>
   <div>
     <h2 class="handoff-headline">The handoff.<br><em>The concept is now locked.</em></h2>
@@ -1570,7 +2735,7 @@ If any answer is no — flag it before outputting.</pre>
 </div>
 
 <!-- ═══════════════════════════════════ PHASE B ═══════════════════════════════════ -->
-<div class="zone-header">
+<div class="zone-header" id="phase-b">
   <p class="zone-label cursor">Phase B · Cursor</p>
   <h2 class="zone-title">Execution —<br><em>building the concept</em></h2>
   <p class="zone-desc">The Creative Direction Document is now your authority. The .mdc skills in Cursor run as background context — they enforce narrative structure, typographic discipline, and anti-genericity automatically when you open HTML files. You do not invoke them — they are always active.</p>
@@ -1638,8 +2803,7 @@ Every section must have a named narrative function.
 If you cannot name a section's function from the CDD — do not include it.</pre>
       </div>
     </div>
-
-    <div class="checkpoint">
+<div class="checkpoint">
       <div class="checkpoint-label">Checkpoint — what you must have before moving to Stage 07</div>
       <ul>
         <li>HTML skeleton with section IDs matching Scene Breakdown names exactly — verify against CDD</li>
@@ -1725,8 +2889,7 @@ Anti-generic check before outputting:
 — Does this section's visual weight match its narrative stage? (climax should feel architecturally distinct)</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Image Generation — Visual Brief (run before any image tool)</div>
       <div class="prompt-box" id="p07b">
         <button class="copy-btn" onclick="copyPrompt('p07b',this)">Copy</button>
@@ -1755,8 +2918,7 @@ WHAT IS NOT IN THIS IMAGE: [explicit exclusions to prevent generic drift]
 ASPECT RATIO: <span class="fill">[16:9 / 4:3 / 1:1 / 3:4 — match section layout]</span></pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — ChatGPT Image / GPT-4o</div>
       <div class="prompt-box" id="p07c">
         <button class="copy-btn" onclick="copyPrompt('p07c',this)">Copy</button>
@@ -1772,8 +2934,7 @@ Style: photographic, not illustrated. High detail, not stylized.
 Aspect ratio: <span class="fill">[ratio]</span>.</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Flux / Precision-Control Generators (NanoBanana, Ideogram, Leonardo, etc.)</div>
       <div class="prompt-box" id="p07d">
         <button class="copy-btn" onclick="copyPrompt('p07d',this)">Copy</button>
@@ -1796,8 +2957,7 @@ SETTINGS (adjust per tool):
 — Style strength: 0 (no style preset — describe everything explicitly)</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Krea.ai — Node Workflow Instructions for Built-in Agent</div>
       <div class="prompt-box" id="p07e">
         <button class="copy-btn" onclick="copyPrompt('p07e',this)">Copy</button>
@@ -1831,8 +2991,7 @@ Goal: every image in this project should feel like it was shot in the same world
 Seed consistency + style reference are the primary control mechanisms."</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Midjourney (optional — for users on this platform)</div>
       <div class="prompt-box" id="p07f">
         <button class="copy-btn" onclick="copyPrompt('p07f',this)">Copy</button>
@@ -1843,8 +3002,7 @@ Seed consistency + style reference are the primary control mechanisms."</pre>
 --ar <span class="fill">[ratio]</span> --style raw --v 6.1 --seed <span class="fill">[fix seed for consistency]</span></pre>
       </div>
     </div>
-
-    <div class="checkpoint">
+<div class="checkpoint">
       <div class="checkpoint-label">Checkpoint — what you must have before Stage 08</div>
       <ul>
         <li>Every section from the CDD Scene Breakdown built and individually reviewed in the browser</li>
@@ -1956,8 +3114,7 @@ Is this trap present in the prototype? [yes / no / traces]
 Evidence: [where it appears or what confirms it was avoided]</pre>
       </div>
     </div>
-
-    <div class="prompt-section">
+<div class="prompt-section">
       <div class="prompt-section-label">Prompt — Concept Drift Check (run if strategic review finds erosion)</div>
       <div class="prompt-box" id="p08b">
         <button class="copy-btn" onclick="copyPrompt('p08b',this)">Copy</button>
@@ -1980,46 +3137,45 @@ SECTIONS AFFECTED BY DRIFT: [list — these need re-review after the fix]</pre>
       </div>
     </div>
 
-    <div style="margin: 24px 0; padding: 20px 22px; border: 1px solid var(--rule-mid); background: var(--bg-2);">
-      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-2); margin-bottom: 14px;">⬡ Creative-Generic Filter — Pattern Recognition Library</div>
-      <div style="font-family: var(--sans); font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 14px;">Applied at Stage 08 only — after the prototype exists. Not during ideation, where it suppresses creativity. The goal is not to prohibit familiar moves. The goal is to ensure every familiar move is justified by the Core Tension, Visual Principles, and the CDD.</div>
-      <div style="font-family: var(--mono); font-size: 11px; color: var(--text-3); margin-bottom: 10px; letter-spacing: 0.08em;">Check whether the output accidentally resembles any of the following:</div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px;">
-        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Generic dark editorial Awwwards template</div>
-        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Oversized grotesque headline + tiny mono labels (default pairing)</div>
-        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Abstract 3D object with no conceptual necessity</div>
-        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Premium SaaS template with metric cards and feature grid</div>
-        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Cinematic gradient product launch (default dark-to-color)</div>
-        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Fake museum/exhibition layout (white space as concept substitute)</div>
-        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Luxury minimalism without a specific conceptual idea</div>
-        <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 8px 12px; background: var(--bg); border: 1px solid var(--rule);">Particle/noise texture as atmosphere without semantic function</div>
+    <div class="info-card info-card--neutral">
+      <p class="info-card__label">⬡ Creative-Generic Filter — Pattern Recognition Library</p>
+      <p class="info-card__intro">Applied at Stage 08 only — after the prototype exists. Not during ideation, where it suppresses creativity. The goal is not to prohibit familiar moves. The goal is to ensure every familiar move is justified by the Core Tension, Visual Principles, and the CDD.</p>
+      <p class="info-card__sub">Check whether the output accidentally resembles any of the following:</p>
+      <div class="tag-grid">
+        <span class="tag-chip">Generic dark editorial Awwwards template</span>
+        <span class="tag-chip">Oversized grotesque headline + tiny mono labels (default pairing)</span>
+        <span class="tag-chip">Abstract 3D object with no conceptual necessity</span>
+        <span class="tag-chip">Premium SaaS template with metric cards and feature grid</span>
+        <span class="tag-chip">Cinematic gradient product launch (default dark-to-color)</span>
+        <span class="tag-chip">Fake museum/exhibition layout (white space as concept substitute)</span>
+        <span class="tag-chip">Luxury minimalism without a specific conceptual idea</span>
+        <span class="tag-chip">Particle/noise texture as atmosphere without semantic function</span>
       </div>
-      <div style="margin-top: 12px; font-family: var(--sans); font-size: 12px; color: var(--text-3); line-height: 1.7;">If a familiar pattern is present: trace it back to the CDD. If it maps to the Core Tension and Visual Principles — it is justified. If it cannot be traced — it is decoration. Remove it. Do not replace it with a different familiar pattern.</div>
+      <p class="info-card__foot">If a familiar pattern is present: trace it back to the CDD. If it maps to the Core Tension and Visual Principles — it is justified. If it cannot be traced — it is decoration. Remove it. Do not replace it with a different familiar pattern.</p>
     </div>
 
-    <div style="margin: 24px 0; padding: 20px 22px; border: 1px solid var(--accent-dim); background: rgba(196,149,74,0.06);">
-      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px;">⬡ Reactive Scenarios — What to do when something is wrong</div>
-      <div style="display: flex; flex-direction: column; gap: 2px;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">A · Execution is generic<br>Concept is still strong</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Anti-genericity protocol<br>Re-run Section Build prompt with Exclusion Zone constraints made explicit. Ask Cursor: "Could this section appear on [competitor name]'s site? If yes — what is the one change that makes it impossible?"</div>
+    <div class="info-card">
+      <p class="info-card__label">⬡ Reactive Scenarios — What to do when something is wrong</p>
+      <div class="lookup">
+        <div class="lookup-row">
+          <div class="lookup-row__cond">A · Execution is generic<br>Concept is still strong</div>
+          <div class="lookup-row__action">→ Anti-genericity protocol<br>Re-run Section Build prompt with Exclusion Zone constraints made explicit. Ask Cursor: "Could this section appear on [competitor name]'s site? If yes — what is the one change that makes it impossible?"</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">B · Concept has eroded<br>Execution is technically correct</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Concept Drift Check (prompt above)<br>Find the origin section. Fix that decision first. Do not touch sections built after until the root is resolved.</div>
+        <div class="lookup-row">
+          <div class="lookup-row__cond">B · Concept has eroded<br>Execution is technically correct</div>
+          <div class="lookup-row__action">→ Concept Drift Check (prompt above)<br>Find the origin section. Fix that decision first. Do not touch sections built after until the root is resolved.</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule);">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">C · Typography broke away<br>from the CDD system</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ Typography audit<br>In Cursor: "Check every font-family and font-weight declaration in index.html. List any that are not using a CSS variable from the skeleton. Replace with the correct variable."</div>
+        <div class="lookup-row">
+          <div class="lookup-row__cond">C · Typography broke away<br>from the CDD system</div>
+          <div class="lookup-row__action">→ Typography audit<br>In Cursor: "Check every font-family and font-weight declaration in index.html. List any that are not using a CSS variable from the skeleton. Replace with the correct variable."</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0;">
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--text-2);">D · Visual system is inconsistent<br>Sections don't feel like one project</div>
-          <div style="font-family: var(--mono); font-size: 11px; color: var(--accent);">→ System consistency sweep<br>In Cursor: "Audit every hardcoded color value and every direct font-family reference. Replace all with CSS variables. Then check that --color-[narrative-stage] shifts correctly at each section boundary."</div>
+        <div class="lookup-row">
+          <div class="lookup-row__cond">D · Visual system is inconsistent<br>Sections don't feel like one project</div>
+          <div class="lookup-row__action">→ System consistency sweep<br>In Cursor: "Audit every hardcoded color value and every direct font-family reference. Replace all with CSS variables. Then check that --color-[narrative-stage] shifts correctly at each section boundary."</div>
         </div>
       </div>
     </div>
-
-    <div class="checkpoint">
+<div class="checkpoint">
       <div class="checkpoint-label">Final checkpoint — this is the output</div>
       <ul>
         <li>Hook works in under 3 seconds without reading text — tested by closing eyes, opening for 2 seconds</li>
@@ -2054,7 +3210,7 @@ SECTIONS AFFECTED BY DRIFT: [list — these need re-review after the fix]</pre>
 </div><!-- end phases -->
 
 <!-- ── CLOSING RULES ── -->
-<div class="closing">
+<div class="closing" id="rules">
   <h2 class="closing-headline">Four rules<br>that protect<br>the <em>concept</em>.</h2>
   <div class="rules-grid">
     <div class="rule-block">
@@ -2078,6 +3234,9 @@ SECTIONS AFFECTED BY DRIFT: [list — these need re-review after the fix]</pre>
       <p class="rule-body">The impulse to add is commercial pressure dressed as creativity. When the critic finds a weakness, the answer is almost always to remove something — not to add a new element to compensate.</p>
     </div>
   </div>
+</div>
+
+</main>
 </div>
 
 <script>
