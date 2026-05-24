@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+(function () {
+  try {
+    var stored = localStorage.getItem('theme');
+    var theme = stored || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+</script>
 <title>Concept to Code — Complete Field Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,6 +22,20 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
+  --radius: 14px;
+  --radius-sm: 8px;
+  --serif: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --nav-w: 220px;
+  --content-max: 720px;
+  --page-pad: clamp(20px, 4vw, 48px);
+  --theme-panel-w: 52px;
+}
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
   --bg: oklch(0.145 0.006 75);
   --bg-2: oklch(0.175 0.007 75);
   --bg-card: oklch(0.195 0.008 75);
@@ -24,14 +49,37 @@
   --cursor: oklch(0.74 0.12 285);
   --rule: oklch(0.26 0.008 75);
   --rule-mid: oklch(0.32 0.009 75);
-  --radius: 14px;
-  --radius-sm: 8px;
-  --serif: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --nav-w: 220px;
-  --content-max: 720px;
-  --page-pad: clamp(20px, 4vw, 48px);
+  --success-text: oklch(0.92 0.12 145);
+  --success-bg: oklch(0.52 0.16 145);
+  --success-border: oklch(0.68 0.18 145);
+  --theme-panel-bg: oklch(0.13 0.006 75);
+  --theme-toggle-bg: oklch(0.2 0.008 75);
+  --theme-toggle-hover: oklch(0.26 0.009 75);
+  --theme-toggle-icon: oklch(0.72 0.02 80);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: oklch(0.985 0.006 85);
+  --bg-2: oklch(0.965 0.008 82);
+  --bg-card: oklch(0.995 0.004 85);
+  --bg-elevated: oklch(0.972 0.007 82);
+  --text: oklch(0.2 0.02 75);
+  --text-2: oklch(0.42 0.018 78);
+  --text-3: oklch(0.55 0.014 75);
+  --accent: oklch(0.48 0.07 75);
+  --accent-dim: oklch(0.58 0.05 75);
+  --claude: oklch(0.48 0.16 155);
+  --cursor: oklch(0.46 0.14 285);
+  --rule: oklch(0.9 0.008 80);
+  --rule-mid: oklch(0.84 0.01 78);
+  --success-text: oklch(0.32 0.14 145);
+  --success-bg: oklch(0.9 0.07 145);
+  --success-border: oklch(0.65 0.12 145);
+  --theme-panel-bg: oklch(0.97 0.006 85);
+  --theme-toggle-bg: oklch(0.94 0.008 82);
+  --theme-toggle-hover: oklch(0.88 0.01 80);
+  --theme-toggle-icon: oklch(0.45 0.02 75);
 }
 
 html {
@@ -43,8 +91,71 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    transition: background-color 0.28s ease, color 0.28s ease;
+  }
+}
+
 body {
   min-height: 100vh;
+  padding-left: var(--theme-panel-w);
+}
+
+/* ── THEME PANEL ── */
+.theme-panel {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--theme-panel-w);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--theme-panel-bg);
+  border-right: 1px solid var(--rule);
+  transition: background-color 0.28s ease, border-color 0.28s ease;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--rule-mid);
+  border-radius: 50%;
+  background: var(--theme-toggle-bg);
+  color: var(--theme-toggle-icon);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.15s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--theme-toggle-hover);
+  border-color: var(--text-3);
+  color: var(--text);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme-toggle:active { transform: scale(0.94); }
+
+.theme-toggle__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+html:not([data-theme]) .theme-toggle__icon--moon,
+[data-theme="dark"] .theme-toggle__icon--moon,
+[data-theme="light"] .theme-toggle__icon--sun {
+  display: none;
 }
 
 .page {
@@ -127,7 +238,7 @@ body {
 
 .masthead-label {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   color: var(--text-3);
   text-transform: uppercase;
@@ -166,7 +277,7 @@ body {
 
 .meta-item {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.12em;
   color: var(--text-3);
   text-transform: uppercase;
@@ -228,7 +339,7 @@ body {
 
 .preface-label {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--text-3);
@@ -260,7 +371,7 @@ body {
 
 .zone-label {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   margin-bottom: 16px;
@@ -351,20 +462,20 @@ body {
 
 .badge-claude {
   color: var(--claude);
-  background: oklch(0.78 0.14 155 / 0.1);
-  border: 1px solid oklch(0.78 0.14 155 / 0.2);
+  background: color-mix(in oklch, var(--claude) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--claude) 24%, transparent);
 }
 
 .badge-cursor {
   color: var(--cursor);
-  background: oklch(0.74 0.12 285 / 0.1);
-  border: 1px solid oklch(0.74 0.12 285 / 0.2);
+  background: color-mix(in oklch, var(--cursor) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--cursor) 24%, transparent);
 }
 
 .badge-both {
   color: var(--accent);
-  background: oklch(0.78 0.06 75 / 0.1);
-  border: 1px solid oklch(0.78 0.06 75 / 0.22);
+  background: color-mix(in oklch, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--accent) 26%, transparent);
 }
 
 .phase-time {
@@ -516,7 +627,7 @@ body {
   font-weight: 500;
   margin-bottom: 10px;
   letter-spacing: 0.06em;
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
 }
 
@@ -543,8 +654,8 @@ body {
 /* ── CHECKPOINT ── */
 .checkpoint {
   margin: 24px 0;
-  border: 1px solid oklch(0.78 0.14 155 / 0.22);
-  background: oklch(0.78 0.14 155 / 0.05);
+  border: 1px solid color-mix(in oklch, var(--claude) 26%, transparent);
+  background: color-mix(in oklch, var(--claude) 8%, transparent);
   padding: 20px 22px;
   border-radius: var(--radius);
 }
@@ -591,8 +702,8 @@ body {
 /* ── TO NEXT ── */
 .to-next {
   margin-top: 24px;
-  border: 1px solid oklch(0.78 0.06 75 / 0.25);
-  background: oklch(0.78 0.06 75 / 0.04);
+  border: 1px solid color-mix(in oklch, var(--accent) 28%, transparent);
+  background: color-mix(in oklch, var(--accent) 6%, transparent);
   padding: 20px 22px;
   border-radius: var(--radius);
 }
@@ -703,15 +814,15 @@ body {
 }
 
 .copy-btn.copied {
-  color: oklch(0.92 0.12 145);
-  background: oklch(0.52 0.16 145);
-  border-color: oklch(0.68 0.18 145);
+  color: var(--success-text);
+  background: var(--success-bg);
+  border-color: var(--success-border);
 }
 
 .copy-btn.copied:hover {
-  color: oklch(0.92 0.12 145);
-  background: oklch(0.52 0.16 145);
-  border-color: oklch(0.68 0.18 145);
+  color: var(--success-text);
+  background: var(--success-bg);
+  border-color: var(--success-border);
 }
 
 /* ── NOTES ── */
@@ -752,8 +863,8 @@ body {
 .handoff-block {
   margin: 56px 0;
   padding: 40px 36px;
-  border: 1px solid oklch(0.78 0.06 75 / 0.28);
-  background: oklch(0.78 0.06 75 / 0.04);
+  border: 1px solid color-mix(in oklch, var(--accent) 30%, transparent);
+  background: color-mix(in oklch, var(--accent) 6%, transparent);
   border-radius: var(--radius);
   display: grid;
   grid-template-columns: 48px 1fr;
@@ -794,7 +905,7 @@ body {
 .handoff-rule {
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px solid oklch(0.78 0.06 75 / 0.2);
+  border-top: 1px solid color-mix(in oklch, var(--accent) 22%, transparent);
   font-family: var(--mono);
   font-size: 9px;
   color: var(--accent-dim);
@@ -913,7 +1024,7 @@ body {
 
 .params-title {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--accent);
@@ -970,9 +1081,9 @@ body {
 }
 
 .param-opt.hi {
-  border-color: oklch(0.78 0.06 75 / 0.35);
+  border-color: color-mix(in oklch, var(--accent) 38%, transparent);
   color: var(--accent);
-  background: oklch(0.78 0.06 75 / 0.06);
+  background: color-mix(in oklch, var(--accent) 8%, transparent);
 }
 
 .param-desc {
@@ -999,7 +1110,7 @@ body {
 
 .mode-label {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   margin-bottom: 10px;
@@ -1049,8 +1160,8 @@ body {
 /* ── SELL TEST ── */
 .sell-test {
   margin: 24px 0;
-  border: 1px solid oklch(0.74 0.12 285 / 0.25);
-  background: oklch(0.74 0.12 285 / 0.05);
+  border: 1px solid color-mix(in oklch, var(--cursor) 28%, transparent);
+  background: color-mix(in oklch, var(--cursor) 8%, transparent);
   padding: 20px 22px;
   border-radius: var(--radius);
 }
@@ -1103,7 +1214,7 @@ body {
 .sell-test-fail {
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 1px solid oklch(0.74 0.12 285 / 0.18);
+  border-top: 1px solid color-mix(in oklch, var(--cursor) 20%, transparent);
   font-family: var(--sans);
   font-size: 12px;
   color: var(--text-3);
@@ -1124,7 +1235,7 @@ body {
 }
 
 .panel--cursor {
-  border-color: oklch(0.74 0.12 285 / 0.28);
+  border-color: color-mix(in oklch, var(--cursor) 30%, transparent);
 }
 
 .panel-header {
@@ -1134,13 +1245,13 @@ body {
 }
 
 .panel--cursor .panel-header {
-  border-bottom-color: oklch(0.74 0.12 285 / 0.15);
-  background: oklch(0.74 0.12 285 / 0.04);
+  border-bottom-color: color-mix(in oklch, var(--cursor) 18%, transparent);
+  background: color-mix(in oklch, var(--cursor) 6%, transparent);
 }
 
 .panel-label {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--cursor);
@@ -1170,7 +1281,7 @@ body {
 
 .panel-cell__label {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--cursor);
@@ -1199,12 +1310,12 @@ body {
 }
 
 .panel--cursor .panel-footer {
-  border-top-color: oklch(0.74 0.12 285 / 0.15);
+  border-top-color: color-mix(in oklch, var(--cursor) 18%, transparent);
 }
 
 .panel-footer__label {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.14em;
   color: var(--text-3);
   margin-bottom: 6px;
@@ -1227,8 +1338,8 @@ body {
 .info-card {
   margin: 28px 0;
   padding: 22px 24px;
-  border: 1px solid oklch(0.78 0.06 75 / 0.22);
-  background: oklch(0.78 0.06 75 / 0.04);
+  border: 1px solid color-mix(in oklch, var(--accent) 24%, transparent);
+  background: color-mix(in oklch, var(--accent) 6%, transparent);
   border-radius: var(--radius);
 }
 
@@ -1370,6 +1481,18 @@ body {
 </style>
 </head>
 <body>
+
+<aside class="theme-panel" aria-label="Appearance">
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to light mode" title="Light mode">
+    <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+    </svg>
+    <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/>
+    </svg>
+  </button>
+</aside>
 
 <div class="page">
 <nav class="site-nav" aria-label="Guide sections">
@@ -3309,6 +3432,25 @@ SECTIONS AFFECTED BY DRIFT: [list — these need re-review after the fix]</pre>
       }, RESET_MS);
     }
   }, true);
+})();
+
+(function initThemeToggle() {
+  const root = document.documentElement;
+  const btn = document.getElementById('theme-toggle');
+  if (!btn) return;
+
+  function applyTheme(theme) {
+    root.setAttribute('data-theme', theme);
+    try { localStorage.setItem('theme', theme); } catch (_) {}
+    const isLight = theme === 'light';
+    btn.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+    btn.setAttribute('title', isLight ? 'Dark mode' : 'Light mode');
+  }
+
+  btn.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+  });
 })();
 </script>
 
